@@ -1447,17 +1447,6 @@ class AppLocalizationsPl extends AppLocalizations {
       'Wprowadź hasło do pokoju, aby uzyskać dostęp do ustawień i statusu.';
 
   @override
-  String get login_usingSavedPassword => 'Logowanie zapisanym hasłem.';
-
-  @override
-  String get login_savedPasswordRejected =>
-      'Zapisane hasło zostało odrzucone. Wprowadź nowe hasło.';
-
-  @override
-  String get login_wrongPasswordOrUnreachable =>
-      'Nieprawidłowe hasło lub węzeł jest nieosiągalny';
-
-  @override
   String get login_routing => 'Przekierowanie';
 
   @override

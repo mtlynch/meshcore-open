@@ -1440,18 +1440,6 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zadajte heslo do miestnosti na prístup k nastaveniam a stavu.';
 
   @override
-  String get login_usingSavedPassword =>
-      'Prihlasovanie pomocou uloženého hesla.';
-
-  @override
-  String get login_savedPasswordRejected =>
-      'Uložené heslo bolo odmietnuté. Zadajte nové heslo.';
-
-  @override
-  String get login_wrongPasswordOrUnreachable =>
-      'Nesprávne heslo alebo uzol nie je dostupný';
-
-  @override
   String get login_routing => 'Rútiace';
 
   @override

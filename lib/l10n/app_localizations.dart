@@ -2639,24 +2639,6 @@ abstract class AppLocalizations {
   /// **'Enter the room password to access settings and status.'**
   String get login_roomDescription;
 
-  /// No description provided for @login_usingSavedPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Using saved password to log in.'**
-  String get login_usingSavedPassword;
-
-  /// No description provided for @login_savedPasswordRejected.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved password was rejected. Please enter a new password.'**
-  String get login_savedPasswordRejected;
-
-  /// No description provided for @login_wrongPasswordOrUnreachable.
-  ///
-  /// In en, this message translates to:
-  /// **'Wrong password or node is unreachable'**
-  String get login_wrongPasswordOrUnreachable;
-
   /// No description provided for @login_routing.
   ///
   /// In en, this message translates to:

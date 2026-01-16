@@ -1384,15 +1384,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get login_roomDescription => '输入房间密码以访问设置和状态。';
 
   @override
-  String get login_usingSavedPassword => '正在使用已保存的密码登录。';
-
-  @override
-  String get login_savedPasswordRejected => '已保存的密码被拒绝。请输入新密码。';
-
-  @override
-  String get login_wrongPasswordOrUnreachable => '密码错误或节点不可达';
-
-  @override
   String get login_routing => '路由';
 
   @override

@@ -1443,17 +1443,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Inserisci la password della stanza per accedere alle impostazioni e allo stato.';
 
   @override
-  String get login_usingSavedPassword => 'Accesso con la password salvata.';
-
-  @override
-  String get login_savedPasswordRejected =>
-      'La password salvata è stata rifiutata. Inserisci una nuova password.';
-
-  @override
-  String get login_wrongPasswordOrUnreachable =>
-      'Password errata o nodo non raggiungibile';
-
-  @override
   String get login_routing => 'Instradamento';
 
   @override

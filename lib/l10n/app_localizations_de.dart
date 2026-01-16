@@ -1446,17 +1446,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Geben Sie das Raumkennwort ein, um auf die Einstellungen und den Status zuzugreifen.';
 
   @override
-  String get login_usingSavedPassword => 'Mit gespeichertem Passwort anmelden.';
-
-  @override
-  String get login_savedPasswordRejected =>
-      'Gespeichertes Passwort wurde abgelehnt. Bitte geben Sie ein neues Passwort ein.';
-
-  @override
-  String get login_wrongPasswordOrUnreachable =>
-      'Falsches Passwort oder Knoten ist nicht erreichbar';
-
-  @override
   String get login_routing => 'Routen';
 
   @override
