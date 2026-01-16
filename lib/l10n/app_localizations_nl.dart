@@ -1439,6 +1439,17 @@ class AppLocalizationsNl extends AppLocalizations {
       'Voer het wachtwoord van de kamer in om toegang te krijgen tot instellingen en status.';
 
   @override
+  String get login_usingSavedPassword => 'Inloggen met opgeslagen wachtwoord.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Opgeslagen wachtwoord is afgewezen. Voer een nieuw wachtwoord in.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Onjuist wachtwoord of het knooppunt is onbereikbaar';
+
+  @override
   String get login_routing => 'Routing';
 
   @override

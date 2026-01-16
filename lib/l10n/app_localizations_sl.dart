@@ -1442,6 +1442,17 @@ class AppLocalizationsSl extends AppLocalizations {
       'Vnesite geslo v sobo za dostop do nastavitev in statusa.';
 
   @override
+  String get login_usingSavedPassword => 'Prijava z shranjenim geslom.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Shranjeno geslo je bilo zavrnjeno. Vnesite novo geslo.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Napačno geslo ali vozlišče ni dosegljivo';
+
+  @override
   String get login_routing => 'Usmerjanje';
 
   @override

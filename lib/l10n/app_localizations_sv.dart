@@ -1430,6 +1430,17 @@ class AppLocalizationsSv extends AppLocalizations {
       'Ange rummets lösenord för att komma åt inställningar och status.';
 
   @override
+  String get login_usingSavedPassword => 'Loggar in med sparat lösenord.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Det sparade lösenordet avvisades. Ange ett nytt lösenord.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Fel lösenord eller noden är inte nåbar';
+
+  @override
   String get login_routing => 'Ruttning';
 
   @override

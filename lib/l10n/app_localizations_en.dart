@@ -1426,6 +1426,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter the room password to access settings and status.';
 
   @override
+  String get login_usingSavedPassword => 'Using saved password to log in.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Saved password was rejected. Please enter a new password.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Wrong password or node is unreachable';
+
+  @override
   String get login_routing => 'Routing';
 
   @override

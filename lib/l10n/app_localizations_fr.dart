@@ -1451,6 +1451,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Entrez le mot de passe de la pièce pour accéder aux paramètres et à l\'état.';
 
   @override
+  String get login_usingSavedPassword =>
+      'Connexion avec le mot de passe enregistré.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Le mot de passe enregistré a été rejeté. Veuillez saisir un nouveau mot de passe.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Mot de passe incorrect ou le nœud est injoignable';
+
+  @override
   String get login_routing => 'Redirection';
 
   @override

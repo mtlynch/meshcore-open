@@ -1448,6 +1448,18 @@ class AppLocalizationsBg extends AppLocalizations {
       'Въведете паролата на стаята, за да получите достъп до настройките и статуса.';
 
   @override
+  String get login_usingSavedPassword =>
+      'Използване на запазена парола за вход.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'Запазената парола беше отхвърлена. Моля, въведете нова парола.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Грешна парола или възелът е недостъпен';
+
+  @override
   String get login_routing => 'Маршрутизиране';
 
   @override

@@ -1445,6 +1445,18 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ingrese la contraseña de la sala para acceder a la configuración y el estado.';
 
   @override
+  String get login_usingSavedPassword =>
+      'Iniciando sesión con la contraseña guardada.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'La contraseña guardada fue rechazada. Introduce una nueva contraseña.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Contraseña incorrecta o el nodo no es accesible';
+
+  @override
   String get login_routing => 'Enrutamiento';
 
   @override

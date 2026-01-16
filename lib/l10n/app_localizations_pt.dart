@@ -1445,6 +1445,18 @@ class AppLocalizationsPt extends AppLocalizations {
       'Insira a senha da sala para acessar as configurações e o status.';
 
   @override
+  String get login_usingSavedPassword =>
+      'A iniciar sessão com a palavra-passe guardada.';
+
+  @override
+  String get login_savedPasswordRejected =>
+      'A palavra-passe guardada foi rejeitada. Introduza uma nova palavra-passe.';
+
+  @override
+  String get login_wrongPasswordOrUnreachable =>
+      'Palavra-passe incorreta ou o nó está inacessível';
+
+  @override
   String get login_routing => 'Rotas';
 
   @override

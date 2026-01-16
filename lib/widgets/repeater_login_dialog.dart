@@ -99,8 +99,8 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       _isLoggingIn = false;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Saved password was rejected. Please enter a new password.'),
+      SnackBar(
+        content: Text(context.l10n.login_savedPasswordRejected),
         backgroundColor: Colors.red,
       ),
     );
@@ -195,7 +195,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           await _handleSavedPasswordRejected();
           return;
         }
-        throw Exception('Wrong password or node is unreachable');
+        throw Exception(context.l10n.login_wrongPasswordOrUnreachable);
       }
 
       // If we got a response, login succeeded
@@ -308,7 +308,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                 Text(
                   _showPasswordEntry
                       ? l10n.login_repeaterDescription
-                      : 'Using saved password to log in.',
+                      : l10n.login_usingSavedPassword,
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
