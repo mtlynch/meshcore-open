@@ -31,11 +31,15 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   bool _savePassword = false;
   bool _isLoading = true;
   bool _obscurePassword = true;
+  // Controls whether the password input UI is visible.
   bool _showPasswordEntry = true;
   late MeshCoreConnector _connector;
   int _currentAttempt = 0;
   static const int _maxAttempts = 5;
+  // Guards against re-triggering auto-login on rebuilds.
   bool _autoLoginTriggered = false;
+  bool _autoLoginFailedWithSavedPassword = false;
+  bool _isAutoLoginAttempt = false;
 
   @override
   void initState() {
@@ -80,11 +84,12 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   }
 
   void _triggerAutoLogin() {
-    if (_autoLoginTriggered) return;
+    if (_autoLoginTriggered || _autoLoginFailedWithSavedPassword) return;
     _autoLoginTriggered = true;
     // Auto-login only once per dialog so repeated failures don't loop.
     Future.microtask(() {
       if (mounted) {
+        _isAutoLoginAttempt = true;
         _handleLogin();
       }
     });
@@ -98,6 +103,8 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       _currentAttempt = 0;
     });
 
+    final wasAutoLogin = _isAutoLoginAttempt;
+    _isAutoLoginAttempt = false;
     try {
       final password = _passwordController.text;
       final repeater = _resolveRepeater(_connector);
@@ -193,6 +200,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         Future.microtask(() => widget.onLogin(password));
       }
     } catch (e) {
+      if (wasAutoLogin) {
+        _autoLoginFailedWithSavedPassword = true;
+      }
       final repeater = _resolveRepeater(_connector);
       appLogger.warn(
         'Login error for ${repeater.name}: $e',
