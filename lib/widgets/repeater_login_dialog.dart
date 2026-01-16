@@ -82,6 +82,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   void _triggerAutoLogin() {
     if (_autoLoginTriggered) return;
     _autoLoginTriggered = true;
+    // Auto-login only once per dialog so repeated failures don't loop.
     Future.microtask(() {
       if (mounted) {
         _handleLogin(usedSavedPassword: true);
