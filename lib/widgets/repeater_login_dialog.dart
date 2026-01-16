@@ -89,23 +89,6 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     });
   }
 
-  Future<void> _handleSavedPasswordRejected() async {
-    await _storage.removeRepeaterPassword(widget.repeater.publicKeyHex);
-    if (!mounted) return;
-    setState(() {
-      _showPasswordEntry = true;
-      _passwordController.clear();
-      _savePassword = true;
-      _isLoggingIn = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.l10n.login_savedPasswordRejected),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
   Future<void> _handleLogin({bool usedSavedPassword = false}) async {
     if (_isLoggingIn) return;
 
@@ -140,7 +123,6 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         tag: 'RepeaterLogin',
       );
       bool? loginResult;
-      bool loginRejected = false;
       for (int attempt = 0; attempt < _maxAttempts; attempt++) {
         if (!mounted) return;
         setState(() {
@@ -164,7 +146,6 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           break;
         }
         if (loginResult == false) {
-          loginRejected = true;
           appLogger.warn(
             'Login failed for ${repeater.name}',
             tag: 'RepeaterLogin',
@@ -190,11 +171,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         _connector.recordRepeaterPathResult(repeater, selection, false, null);
       }
 
+      // We can't distinguish "wrong password" vs "unreachable/no response"
+      // from the device/companion radio, so we surface a generic failure.
       if (loginResult != true) {
-        if (loginRejected && usedSavedPassword) {
-          await _handleSavedPasswordRejected();
-          return;
-        }
         throw Exception(context.l10n.login_wrongPasswordOrUnreachable);
       }
 
@@ -221,6 +200,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       if (mounted) {
         setState(() {
           _isLoggingIn = false;
+          if (usedSavedPassword) {
+            _showPasswordEntry = true;
+          }
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -271,6 +253,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     final repeater = _resolveRepeater(connector);
     final isFloodMode = repeater.pathOverride == -1;
     return AlertDialog(
+      scrollable: true,
       title: Row(
         children: [
           const Icon(Icons.cell_tower, color: Colors.orange),
