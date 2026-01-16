@@ -53,7 +53,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         _passwordController.text = savedPassword;
         _savePassword = true;
         _isLoading = false;
-        _showPasswordEntry = false;
+        _showPasswordEntry = true;
       });
       _triggerAutoLogin();
     } else {
@@ -174,7 +174,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       // We can't distinguish "wrong password" vs "unreachable/no response"
       // from the device/companion radio, so we surface a generic failure.
       if (loginResult != true) {
-        throw Exception(context.l10n.login_wrongPasswordOrUnreachable);
+        throw Exception('Wrong password or node is unreachable');
       }
 
       // If we got a response, login succeeded
@@ -289,9 +289,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                 Text(
-                  _showPasswordEntry
-                      ? l10n.login_repeaterDescription
-                      : l10n.login_usingSavedPassword,
+                  l10n.login_repeaterDescription,
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
