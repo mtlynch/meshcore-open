@@ -85,12 +85,12 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     // Auto-login only once per dialog so repeated failures don't loop.
     Future.microtask(() {
       if (mounted) {
-        _handleLogin(usedSavedPassword: true);
+        _handleLogin();
       }
     });
   }
 
-  Future<void> _handleLogin({bool usedSavedPassword = false}) async {
+  Future<void> _handleLogin() async {
     if (_isLoggingIn) return;
 
     setState(() {
@@ -201,9 +201,6 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       if (mounted) {
         setState(() {
           _isLoggingIn = false;
-          if (usedSavedPassword) {
-            _showPasswordEntry = true;
-          }
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -440,7 +437,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           FilledButton.icon(
             onPressed: _isLoading
                 ? null
-                : () => _handleLogin(usedSavedPassword: !_showPasswordEntry),
+                : _handleLogin,
             icon: const Icon(Icons.login, size: 18),
             label: Text(l10n.login_login),
           ),
