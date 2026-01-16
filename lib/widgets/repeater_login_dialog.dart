@@ -31,9 +31,15 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   bool _savePassword = false;
   bool _isLoading = true;
   bool _obscurePassword = true;
+  // Controls whether the password input UI is visible.
+  bool _showPasswordEntry = true;
   late MeshCoreConnector _connector;
   int _currentAttempt = 0;
   static const int _maxAttempts = 5;
+  // Guards against re-triggering auto-login on rebuilds.
+  bool _autoLoginTriggered = false;
+  bool _autoLoginFailedWithSavedPassword = false;
+  bool _isAutoLoginAttempt = false;
 
   @override
   void initState() {
@@ -45,15 +51,19 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   Future<void> _loadSavedPassword() async {
     final savedPassword =
         await _storage.getRepeaterPassword(widget.repeater.publicKeyHex);
+    if (!mounted) return;
     if (savedPassword != null) {
       setState(() {
         _passwordController.text = savedPassword;
         _savePassword = true;
         _isLoading = false;
+        _showPasswordEntry = true;
       });
+      _triggerAutoLogin();
     } else {
       setState(() {
         _isLoading = false;
+        _showPasswordEntry = true;
       });
     }
   }
@@ -73,6 +83,18 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     );
   }
 
+  void _triggerAutoLogin() {
+    if (_autoLoginTriggered || _autoLoginFailedWithSavedPassword) return;
+    _autoLoginTriggered = true;
+    // Auto-login only once per dialog so repeated failures don't loop.
+    Future.microtask(() {
+      if (mounted) {
+        _isAutoLoginAttempt = true;
+        _handleLogin();
+      }
+    });
+  }
+
   Future<void> _handleLogin() async {
     if (_isLoggingIn) return;
 
@@ -81,6 +103,8 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       _currentAttempt = 0;
     });
 
+    final wasAutoLogin = _isAutoLoginAttempt;
+    _isAutoLoginAttempt = false;
     try {
       final password = _passwordController.text;
       final repeater = _resolveRepeater(_connector);
@@ -134,7 +158,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
             'Login failed for ${repeater.name}',
             tag: 'RepeaterLogin',
           );
-          throw Exception('Wrong password or node is unreachable');
+          break;
         }
         appLogger.warn(
           'Login attempt ${attempt + 1} timed out after ${timeoutSeconds}s',
@@ -155,6 +179,8 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         _connector.recordRepeaterPathResult(repeater, selection, false, null);
       }
 
+      // We can't distinguish "wrong password" vs "unreachable/no response"
+      // from the device/companion radio, so we surface a generic failure.
       if (loginResult != true) {
         throw Exception('Wrong password or node is unreachable');
       }
@@ -174,6 +200,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         Future.microtask(() => widget.onLogin(password));
       }
     } catch (e) {
+      if (wasAutoLogin) {
+        _autoLoginFailedWithSavedPassword = true;
+      }
       final repeater = _resolveRepeater(_connector);
       appLogger.warn(
         'Login error for ${repeater.name}: $e',
@@ -232,6 +261,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     final repeater = _resolveRepeater(connector);
     final isFloodMode = repeater.pathOverride == -1;
     return AlertDialog(
+      scrollable: true,
       title: Row(
         children: [
           const Icon(Icons.cell_tower, color: Colors.orange),
@@ -271,116 +301,118 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: l10n.login_password,
-                    hintText: l10n.login_enterPassword,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                if (_showPasswordEntry) ...[
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: l10n.login_password,
+                      hintText: l10n.login_enterPassword,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
                     ),
+                    onSubmitted: (_) => _handleLogin(),
+                    autofocus: _passwordController.text.isEmpty,
                   ),
-                  onSubmitted: (_) => _handleLogin(),
-                  autofocus: _passwordController.text.isEmpty,
-                ),
-                const SizedBox(height: 12),
-                CheckboxListTile(
-                  value: _savePassword,
-                  onChanged: (value) {
-                    setState(() {
-                      _savePassword = value ?? false;
-                    });
-                  },
-                  title: Text(
-                    l10n.login_savePassword,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                  subtitle: Text(
-                    l10n.login_savePasswordSubtitle,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                const Divider(),
-                Row(
-                  children: [
-                    Text(
-                      l10n.login_routing,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    value: _savePassword,
+                    onChanged: (value) {
+                      setState(() {
+                        _savePassword = value ?? false;
+                      });
+                    },
+                    title: Text(
+                      l10n.login_savePassword,
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    const Spacer(),
-                    PopupMenuButton<String>(
-                      icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-                      tooltip: l10n.login_routingMode,
-                      onSelected: (mode) async {
-                        if (mode == 'flood') {
-                          await connector.setPathOverride(repeater, pathLen: -1);
-                        } else {
-                          await connector.setPathOverride(repeater, pathLen: null);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'auto',
-                          child: Row(
-                            children: [
-                              Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
-                              const SizedBox(width: 8),
-                              Text(
-                                l10n.login_autoUseSavedPath,
-                                style: TextStyle(
-                                  fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                    subtitle: Text(
+                      l10n.login_savePasswordSubtitle,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      Text(
+                        l10n.login_routing,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      PopupMenuButton<String>(
+                        icon: Icon(isFloodMode ? Icons.waves : Icons.route),
+                        tooltip: l10n.login_routingMode,
+                        onSelected: (mode) async {
+                          if (mode == 'flood') {
+                            await connector.setPathOverride(repeater, pathLen: -1);
+                          } else {
+                            await connector.setPathOverride(repeater, pathLen: null);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'auto',
+                            child: Row(
+                              children: [
+                                Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.login_autoUseSavedPath,
+                                  style: TextStyle(
+                                    fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: 'flood',
-                          child: Row(
-                            children: [
-                              Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
-                              const SizedBox(width: 8),
-                              Text(
-                                l10n.login_forceFloodMode,
-                                style: TextStyle(
-                                  fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                          PopupMenuItem(
+                            value: 'flood',
+                            child: Row(
+                              children: [
+                                Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.login_forceFloodMode,
+                                  style: TextStyle(
+                                    fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  repeater.pathLabel,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () => PathManagementDialog.show(context, contact: repeater),
-                    icon: const Icon(Icons.timeline, size: 18),
-                    label: Text(l10n.login_managePaths),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    repeater.pathLabel,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: () => PathManagementDialog.show(context, contact: repeater),
+                      icon: const Icon(Icons.timeline, size: 18),
+                      label: Text(l10n.login_managePaths),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -413,7 +445,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           )
         else
           FilledButton.icon(
-            onPressed: _isLoading ? null : _handleLogin,
+            onPressed: _isLoading
+                ? null
+                : _handleLogin,
             icon: const Icon(Icons.login, size: 18),
             label: Text(l10n.login_login),
           ),
