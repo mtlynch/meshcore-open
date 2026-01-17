@@ -20,7 +20,8 @@ class BufferReader {
 
   Uint8List readRemainingBytes() => readBytes(remaining);
 
-  String readString() => utf8.decode(readRemainingBytes(), allowMalformed: true);
+  String readString() =>
+      utf8.decode(readRemainingBytes(), allowMalformed: true);
 
   String readCString(int maxLength) {
     final value = <int>[];
@@ -38,13 +39,19 @@ class BufferReader {
 
   int readUInt8() => readBytes(1).buffer.asByteData().getUint8(0);
   int readInt8() => readBytes(1).buffer.asByteData().getInt8(0);
-  int readUInt16LE() => readBytes(2).buffer.asByteData().getUint16(0, Endian.little);
-  int readUInt16BE() => readBytes(2).buffer.asByteData().getUint16(0, Endian.big);
-  int readUInt32LE() => readBytes(4).buffer.asByteData().getUint32(0, Endian.little);
-  int readUInt32BE() => readBytes(4).buffer.asByteData().getUint32(0, Endian.big);
-  int readInt16LE() => readBytes(2).buffer.asByteData().getInt16(0, Endian.little);
+  int readUInt16LE() =>
+      readBytes(2).buffer.asByteData().getUint16(0, Endian.little);
+  int readUInt16BE() =>
+      readBytes(2).buffer.asByteData().getUint16(0, Endian.big);
+  int readUInt32LE() =>
+      readBytes(4).buffer.asByteData().getUint32(0, Endian.little);
+  int readUInt32BE() =>
+      readBytes(4).buffer.asByteData().getUint32(0, Endian.big);
+  int readInt16LE() =>
+      readBytes(2).buffer.asByteData().getInt16(0, Endian.little);
   int readInt16BE() => readBytes(2).buffer.asByteData().getInt16(0, Endian.big);
-  int readInt32LE() => readBytes(4).buffer.asByteData().getInt32(0, Endian.little);
+  int readInt32LE() =>
+      readBytes(4).buffer.asByteData().getInt32(0, Endian.little);
 
   int readInt24BE() {
     var value = (readByte() << 16) | (readByte() << 8) | readByte();
@@ -63,21 +70,25 @@ class BufferWriter {
   void writeBytes(Uint8List bytes) => _builder.add(bytes);
 
   void writeUInt16LE(int num) {
-    final bytes = Uint8List(2)..buffer.asByteData().setUint16(0, num, Endian.little);
+    final bytes = Uint8List(2)
+      ..buffer.asByteData().setUint16(0, num, Endian.little);
     writeBytes(bytes);
   }
 
   void writeUInt32LE(int num) {
-    final bytes = Uint8List(4)..buffer.asByteData().setUint32(0, num, Endian.little);
+    final bytes = Uint8List(4)
+      ..buffer.asByteData().setUint32(0, num, Endian.little);
     writeBytes(bytes);
   }
 
   void writeInt32LE(int num) {
-    final bytes = Uint8List(4)..buffer.asByteData().setInt32(0, num, Endian.little);
+    final bytes = Uint8List(4)
+      ..buffer.asByteData().setInt32(0, num, Endian.little);
     writeBytes(bytes);
   }
 
-  void writeString(String string) => writeBytes(Uint8List.fromList(utf8.encode(string)));
+  void writeString(String string) =>
+      writeBytes(Uint8List.fromList(utf8.encode(string)));
 
   void writeCString(String string, int maxLength) {
     final bytes = Uint8List(maxLength);
@@ -166,7 +177,6 @@ const int pushCodeNewAdvert = 0x8A;
 const int pushCodeTelemetryResponse = 0x8B;
 const int pushCodeBinaryResponse = 0x8C;
 
-
 // Contact/advertisement types
 const int advTypeChat = 1;
 const int advTypeRepeater = 2;
@@ -233,10 +243,7 @@ class ParsedContactText {
   final Uint8List senderPrefix;
   final String text;
 
-  const ParsedContactText({
-    required this.senderPrefix,
-    required this.text,
-  });
+  const ParsedContactText({required this.senderPrefix, required this.text});
 }
 
 ParsedContactText? parseContactMessageText(Uint8List frame) {
@@ -265,10 +272,17 @@ ParsedContactText? parseContactMessageText(Uint8List frame) {
     return null;
   }
 
-  var text = readCString(frame, baseTextOffset, frame.length - baseTextOffset).trim();
+  var text = readCString(
+    frame,
+    baseTextOffset,
+    frame.length - baseTextOffset,
+  ).trim();
   if (text.isEmpty && frame.length > baseTextOffset + 4) {
-    text =
-        readCString(frame, baseTextOffset + 4, frame.length - (baseTextOffset + 4)).trim();
+    text = readCString(
+      frame,
+      baseTextOffset + 4,
+      frame.length - (baseTextOffset + 4),
+    ).trim();
   }
   if (text.isEmpty) return null;
 
@@ -362,7 +376,8 @@ Uint8List buildSendTextMsgFrame(
   int attempt = 0,
   int? timestampSeconds,
 }) {
-  final timestamp = timestampSeconds ?? (DateTime.now().millisecondsSinceEpoch ~/ 1000);
+  final timestamp =
+      timestampSeconds ?? (DateTime.now().millisecondsSinceEpoch ~/ 1000);
   final writer = BufferWriter();
   writer.writeByte(cmdSendTxtMsg);
   writer.writeByte(txtTypePlain);
@@ -444,7 +459,9 @@ Uint8List buildSendSelfAdvertFrame({bool flood = false}) {
 // Format: [cmd][name...]
 Uint8List buildSetAdvertNameFrame(String name) {
   final nameBytes = utf8.encode(name);
-  final nameLen = nameBytes.length < maxNameSize ? nameBytes.length : maxNameSize - 1;
+  final nameLen = nameBytes.length < maxNameSize
+      ? nameBytes.length
+      : maxNameSize - 1;
   final writer = BufferWriter();
   writer.writeByte(cmdSetAdvertName);
   writer.writeBytes(Uint8List.fromList(nameBytes.sublist(0, nameLen)));
@@ -544,7 +561,9 @@ Uint8List buildUpdateContactPathFrame(
   // Path data (64 bytes, zero-padded)
   final pathPadded = Uint8List(maxPathSize);
   if (customPath.isNotEmpty && pathLen > 0) {
-    final copyLen = customPath.length < maxPathSize ? customPath.length : maxPathSize;
+    final copyLen = customPath.length < maxPathSize
+        ? customPath.length
+        : maxPathSize;
     for (int i = 0; i < copyLen; i++) {
       pathPadded[i] = customPath[i];
     }
@@ -598,9 +617,11 @@ int calculateLoRaAirtime({
   final crc = 1; // CRC enabled
   final de = lowDataRateOptimize ? 1 : 0;
 
-  final numerator = 8 * payloadBytes - 4 * spreadingFactor + 28 + 16 * crc - headerBytes;
+  final numerator =
+      8 * payloadBytes - 4 * spreadingFactor + 28 + 16 * crc - headerBytes;
   final denominator = 4 * (spreadingFactor - 2 * de);
-  var payloadSymbols = 8 + ((numerator / denominator).ceil()) * (codingRate + 4);
+  var payloadSymbols =
+      8 + ((numerator / denominator).ceil()) * (codingRate + 4);
 
   if (payloadSymbols < 0) {
     payloadSymbols = 8;
@@ -647,7 +668,8 @@ Uint8List buildSendCliCommandFrame(
   int attempt = 0,
   int? timestampSeconds,
 }) {
-  final timestamp = timestampSeconds ?? (DateTime.now().millisecondsSinceEpoch ~/ 1000);
+  final timestamp =
+      timestampSeconds ?? (DateTime.now().millisecondsSinceEpoch ~/ 1000);
   final writer = BufferWriter();
   writer.writeByte(cmdSendTxtMsg);
   writer.writeByte(txtTypeCliData);
@@ -661,10 +683,7 @@ Uint8List buildSendCliCommandFrame(
 
 // Build a telemetry request frame
 // Format: [cmd][pub_key x32][payload]
-Uint8List buildSendBinaryReq(
-  Uint8List repeaterPubKey, {
-  Uint8List? payload,
-}) {
+Uint8List buildSendBinaryReq(Uint8List repeaterPubKey, {Uint8List? payload}) {
   final writer = BufferWriter();
   writer.writeByte(cmdSendBinaryReq);
   writer.writeBytes(repeaterPubKey);

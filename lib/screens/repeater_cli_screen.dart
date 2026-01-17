@@ -119,14 +119,24 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
 
     // Show debug info if requested
     if (showDebug && mounted) {
-      final frame = buildSendCliCommandFrame(widget.repeater.publicKey, command);
-      DebugFrameViewer.showFrameDebug(context, frame, context.l10n.repeater_cliCommandFrameTitle);
+      final frame = buildSendCliCommandFrame(
+        widget.repeater.publicKey,
+        command,
+      );
+      DebugFrameViewer.showFrameDebug(
+        context,
+        frame,
+        context.l10n.repeater_cliCommandFrameTitle,
+      );
     }
 
     // Send CLI command to repeater with retry
     try {
       if (_commandService != null) {
-        final connector = Provider.of<MeshCoreConnector>(context, listen: false);
+        final connector = Provider.of<MeshCoreConnector>(
+          context,
+          listen: false,
+        );
         final repeater = _resolveRepeater(connector);
         final response = await _commandService!.sendCommand(
           repeater,
@@ -230,7 +240,10 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
             Text(l10n.repeater_cliTitle),
             Text(
               repeater.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ],
         ),
@@ -251,12 +264,20 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
                 value: 'auto',
                 child: Row(
                   children: [
-                    Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.auto_mode,
+                      size: 20,
+                      color: !isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.repeater_autoUseSavedPath,
                       style: TextStyle(
-                        fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: !isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -266,12 +287,20 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
                 value: 'flood',
                 child: Row(
                   children: [
-                    Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.waves,
+                      size: 20,
+                      color: isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.repeater_forceFloodMode,
                       style: TextStyle(
-                        fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -282,7 +311,8 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
           IconButton(
             icon: const Icon(Icons.timeline),
             tooltip: l10n.repeater_pathManagement,
-            onPressed: () => PathManagementDialog.show(context, contact: repeater),
+            onPressed: () =>
+                PathManagementDialog.show(context, contact: repeater),
           ),
           IconButton(
             icon: const Icon(Icons.bug_report),
@@ -473,7 +503,10 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
                 decoration: InputDecoration(
                   hintText: l10n.repeater_enterCommandHint,
                   border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   prefixText: '> ',
                 ),
                 style: const TextStyle(fontFamily: 'monospace'),
@@ -718,10 +751,7 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
     ];
 
     final gpsCommands = [
-      _CommandHelpEntry(
-        command: 'gps',
-        description: l10n.repeater_cliHelpGps,
-      ),
+      _CommandHelpEntry(command: 'gps', description: l10n.repeater_cliHelpGps),
       _CommandHelpEntry(
         command: 'gps {on|off}',
         description: l10n.repeater_cliHelpGpsOnOff,
@@ -758,13 +788,25 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
                 style: const TextStyle(fontSize: 13),
               ),
               const SizedBox(height: 16),
-              _buildHelpSection(context, l10n.repeater_general, generalCommands),
+              _buildHelpSection(
+                context,
+                l10n.repeater_general,
+                generalCommands,
+              ),
               const SizedBox(height: 16),
-              _buildHelpSection(context, l10n.repeater_settingsCategory, settingsCommands),
+              _buildHelpSection(
+                context,
+                l10n.repeater_settingsCategory,
+                settingsCommands,
+              ),
               const SizedBox(height: 16),
               _buildHelpSection(context, l10n.repeater_bridge, bridgeCommands),
               const SizedBox(height: 16),
-              _buildHelpSection(context, l10n.repeater_logging, loggingCommands),
+              _buildHelpSection(
+                context,
+                l10n.repeater_logging,
+                loggingCommands,
+              ),
               const SizedBox(height: 16),
               _buildHelpSection(
                 context,
@@ -813,10 +855,7 @@ class _RepeaterCliScreenState extends State<RepeaterCliScreen> {
         ),
         if (note != null) ...[
           const SizedBox(height: 6),
-          Text(
-            note,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(note, style: const TextStyle(fontSize: 12)),
         ],
         const SizedBox(height: 8),
         ...commands.map((entry) => _buildHelpCommandCard(context, entry)),
@@ -871,8 +910,5 @@ class _CommandHelpEntry {
   final String command;
   final String description;
 
-  const _CommandHelpEntry({
-    required this.command,
-    required this.description,
-  });
+  const _CommandHelpEntry({required this.command, required this.description});
 }

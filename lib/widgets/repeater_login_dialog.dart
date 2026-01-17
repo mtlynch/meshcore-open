@@ -44,8 +44,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   }
 
   Future<void> _loadSavedPassword() async {
-    final savedPassword =
-        await _storage.getRepeaterPassword(widget.repeater.publicKeyHex);
+    final savedPassword = await _storage.getRepeaterPassword(
+      widget.repeater.publicKeyHex,
+    );
     if (savedPassword != null) {
       setState(() {
         _passwordController.text = savedPassword;
@@ -102,12 +103,10 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       );
       final timeoutSeconds = (timeoutMs / 1000).ceil();
       final timeout = Duration(milliseconds: timeoutMs);
-      final selectionLabel =
-          selection.useFlood ? 'flood' : '${selection.hopCount} hops';
-      appLogger.info(
-        'Login routing: $selectionLabel',
-        tag: 'RepeaterLogin',
-      );
+      final selectionLabel = selection.useFlood
+          ? 'flood'
+          : '${selection.hopCount} hops';
+      appLogger.info('Login routing: $selectionLabel', tag: 'RepeaterLogin');
       bool? loginResult;
       for (int attempt = 0; attempt < _maxAttempts; attempt++) {
         if (!mounted) return;
@@ -119,9 +118,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           'Sending login attempt ${attempt + 1}/$_maxAttempts',
           tag: 'RepeaterLogin',
         );
-        await _connector.sendFrame(
-          loginFrame,
-        );
+        await _connector.sendFrame(loginFrame);
 
         loginResult = await _awaitLoginResponse(timeout);
         if (loginResult == true) {
@@ -171,7 +168,9 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       // Save password if requested
       if (_savePassword) {
         await _storage.saveRepeaterPassword(
-            widget.repeater.publicKeyHex, password);
+          widget.repeater.publicKeyHex,
+          password,
+        );
       } else {
         // Remove saved password if user unchecked the box
         await _storage.removeRepeaterPassword(widget.repeater.publicKeyHex);
@@ -269,150 +268,180 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text(
-                  l10n.login_repeaterDescription,
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 16),
-                if (_loginError != null) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.error, size: 18, color: Theme.of(context).colorScheme.error),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _loginError!,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: l10n.login_password,
-                    hintText: l10n.login_enterPassword,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                  onChanged: (_) {
-                    if (_loginError != null && mounted) {
-                      setState(() {
-                        _loginError = null;
-                      });
-                    }
-                  },
-                  onSubmitted: (_) => _handleLogin(),
-                  autofocus: _passwordController.text.isEmpty,
-                ),
-                const SizedBox(height: 12),
-                CheckboxListTile(
-                  value: _savePassword,
-                  onChanged: (value) {
-                    setState(() {
-                      _savePassword = value ?? false;
-                    });
-                  },
-                  title: Text(
-                    l10n.login_savePassword,
+                  Text(
+                    l10n.login_repeaterDescription,
                     style: const TextStyle(fontSize: 14),
                   ),
-                  subtitle: Text(
-                    l10n.login_savePasswordSubtitle,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                const Divider(),
-                Row(
-                  children: [
-                    Text(
-                      l10n.login_routing,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                    PopupMenuButton<String>(
-                      icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-                      tooltip: l10n.login_routingMode,
-                      onSelected: (mode) async {
-                        if (mode == 'flood') {
-                          await connector.setPathOverride(repeater, pathLen: -1);
-                        } else {
-                          await connector.setPathOverride(repeater, pathLen: null);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'auto',
-                          child: Row(
-                            children: [
-                              Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
-                              const SizedBox(width: 8),
-                              Text(
-                                l10n.login_autoUseSavedPath,
-                                style: TextStyle(
-                                  fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
+                  const SizedBox(height: 16),
+                  if (_loginError != null) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.error,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.error,
                         ),
-                        PopupMenuItem(
-                          value: 'flood',
-                          child: Row(
-                            children: [
-                              Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
-                              const SizedBox(width: 8),
-                              Text(
-                                l10n.login_forceFloodMode,
-                                style: TextStyle(
-                                  fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _loginError!,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
                   ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  repeater.pathLabel,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () => PathManagementDialog.show(context, contact: repeater),
-                    icon: const Icon(Icons.timeline, size: 18),
-                    label: Text(l10n.login_managePaths),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: l10n.login_password,
+                      hintText: l10n.login_enterPassword,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
+                    onChanged: (_) {
+                      if (_loginError != null && mounted) {
+                        setState(() {
+                          _loginError = null;
+                        });
+                      }
+                    },
+                    onSubmitted: (_) => _handleLogin(),
+                    autofocus: _passwordController.text.isEmpty,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    value: _savePassword,
+                    onChanged: (value) {
+                      setState(() {
+                        _savePassword = value ?? false;
+                      });
+                    },
+                    title: Text(
+                      l10n.login_savePassword,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    subtitle: Text(
+                      l10n.login_savePasswordSubtitle,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      Text(
+                        l10n.login_routing,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      PopupMenuButton<String>(
+                        icon: Icon(isFloodMode ? Icons.waves : Icons.route),
+                        tooltip: l10n.login_routingMode,
+                        onSelected: (mode) async {
+                          if (mode == 'flood') {
+                            await connector.setPathOverride(
+                              repeater,
+                              pathLen: -1,
+                            );
+                          } else {
+                            await connector.setPathOverride(
+                              repeater,
+                              pathLen: null,
+                            );
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'auto',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.auto_mode,
+                                  size: 20,
+                                  color: !isFloodMode
+                                      ? Theme.of(context).primaryColor
+                                      : null,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.login_autoUseSavedPath,
+                                  style: TextStyle(
+                                    fontWeight: !isFloodMode
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'flood',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.waves,
+                                  size: 20,
+                                  color: isFloodMode
+                                      ? Theme.of(context).primaryColor
+                                      : null,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.login_forceFloodMode,
+                                  style: TextStyle(
+                                    fontWeight: isFloodMode
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    repeater.pathLabel,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: () =>
+                          PathManagementDialog.show(context, contact: repeater),
+                      icon: const Icon(Icons.timeline, size: 18),
+                      label: Text(l10n.login_managePaths),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

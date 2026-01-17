@@ -21,20 +21,12 @@ import 'contacts_screen.dart';
 import 'map_screen.dart';
 import 'settings_screen.dart';
 
-enum ChannelSortOption {
-  manual,
-  name,
-  latestMessages,
-  unread,
-}
+enum ChannelSortOption { manual, name, latestMessages, unread }
 
 class ChannelsScreen extends StatefulWidget {
   final bool hideBackButton;
 
-  const ChannelsScreen({
-    super.key,
-    this.hideBackButton = false,
-  });
+  const ChannelsScreen({super.key, this.hideBackButton = false});
 
   @override
   State<ChannelsScreen> createState() => _ChannelsScreenState();
@@ -127,7 +119,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
               );
             }
 
-            final filteredChannels = _filterAndSortChannels(channels, connector);
+            final filteredChannels = _filterAndSortChannels(
+              channels,
+              connector,
+            );
 
             return Column(
               children: [
@@ -157,17 +152,22 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                     onChanged: (value) {
                       _searchDebounce?.cancel();
-                      _searchDebounce = Timer(const Duration(milliseconds: 300), () {
-                        if (!mounted) return;
-                        setState(() {
-                          _searchQuery = value.toLowerCase();
-                        });
-                      });
+                      _searchDebounce = Timer(
+                        const Duration(milliseconds: 300),
+                        () {
+                          if (!mounted) return;
+                          setState(() {
+                            _searchQuery = value.toLowerCase();
+                          });
+                        },
+                      );
                     },
                   ),
                 ),
@@ -181,11 +181,18 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 64,
+                                      color: Colors.grey[400],
+                                    ),
                                     const SizedBox(height: 16),
                                     Text(
                                       context.l10n.channels_noChannelsFound,
-                                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -193,51 +200,58 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                             ),
                           ],
                         )
-                      : (_sortOption == ChannelSortOption.manual && _searchQuery.isEmpty)
-                          ? ReorderableListView.builder(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 8,
-                                bottom: 88,
+                      : (_sortOption == ChannelSortOption.manual &&
+                            _searchQuery.isEmpty)
+                      ? ReorderableListView.builder(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 8,
+                            bottom: 88,
+                          ),
+                          buildDefaultDragHandles: false,
+                          itemCount: filteredChannels.length,
+                          onReorder: (oldIndex, newIndex) {
+                            if (newIndex > oldIndex) newIndex -= 1;
+                            final reordered = List<Channel>.from(
+                              filteredChannels,
+                            );
+                            final item = reordered.removeAt(oldIndex);
+                            reordered.insert(newIndex, item);
+                            unawaited(
+                              connector.setChannelOrder(
+                                reordered.map((c) => c.index).toList(),
                               ),
-                              buildDefaultDragHandles: false,
-                              itemCount: filteredChannels.length,
-                              onReorder: (oldIndex, newIndex) {
-                                if (newIndex > oldIndex) newIndex -= 1;
-                                final reordered = List<Channel>.from(filteredChannels);
-                                final item = reordered.removeAt(oldIndex);
-                                reordered.insert(newIndex, item);
-                                unawaited(
-                                  connector.setChannelOrder(
-                                    reordered.map((c) => c.index).toList(),
-                                  ),
-                                );
-                              },
-                              itemBuilder: (context, index) {
-                                final channel = filteredChannels[index];
-                                return _buildChannelTile(
-                                  context,
-                                  connector,
-                                  channel,
-                                  showDragHandle: true,
-                                  dragIndex: index,
-                                );
-                              },
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 8,
-                                bottom: 88,
-                              ),
-                              itemCount: filteredChannels.length,
-                              itemBuilder: (context, index) {
-                                final channel = filteredChannels[index];
-                                return _buildChannelTile(context, connector, channel);
-                              },
-                            ),
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            final channel = filteredChannels[index];
+                            return _buildChannelTile(
+                              context,
+                              connector,
+                              channel,
+                              showDragHandle: true,
+                              dragIndex: index,
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 8,
+                            bottom: 88,
+                          ),
+                          itemCount: filteredChannels.length,
+                          itemBuilder: (context, index) {
+                            final channel = filteredChannels[index];
+                            return _buildChannelTile(
+                              context,
+                              connector,
+                              channel,
+                            );
+                          },
+                        ),
                 ),
               ],
             );
@@ -251,7 +265,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           top: false,
           child: QuickSwitchBar(
             selectedIndex: 1,
-            onDestinationSelected: (index) => _handleQuickSwitch(index, context),
+            onDestinationSelected: (index) =>
+                _handleQuickSwitch(index, context),
           ),
         ),
       ),
@@ -261,12 +276,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   Widget _buildChannelTile(
     BuildContext context,
     MeshCoreConnector connector,
-    Channel channel,
-    {
+    Channel channel, {
     bool showDragHandle = false,
     int? dragIndex,
-  }
-  ) {
+  }) {
     final unreadCount = connector.getUnreadCountForChannel(channel);
     return Card(
       key: ValueKey('channel_${channel.index}'),
@@ -284,21 +297,23 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             channel.isPublicChannel
                 ? Icons.public
                 : channel.name.startsWith('#')
-                    ? Icons.tag
-                    : Icons.lock,
+                ? Icons.tag
+                : Icons.lock,
             color: channel.isPublicChannel ? Colors.green : Colors.blue,
           ),
         ),
         title: Text(
-          channel.name.isEmpty ? context.l10n.channels_channelIndex(channel.index) : channel.name,
+          channel.name.isEmpty
+              ? context.l10n.channels_channelIndex(channel.index)
+              : channel.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           channel.name.startsWith('#')
               ? context.l10n.channels_hashtagChannel
               : channel.isPublicChannel
-                  ? context.l10n.channels_publicChannel
-                  : context.l10n.channels_privateChannel,
+              ? context.l10n.channels_publicChannel
+              : context.l10n.channels_privateChannel,
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -358,7 +373,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: Text(context.l10n.channels_deleteChannel, style: const TextStyle(color: Colors.red)),
+              title: Text(
+                context.l10n.channels_deleteChannel,
+                style: const TextStyle(color: Colors.red),
+              ),
               onTap: () async {
                 Navigator.pop(context);
                 await Future.delayed(const Duration(milliseconds: 100));
@@ -379,17 +397,13 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       case 0:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const ContactsScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const ContactsScreen(hideBackButton: true)),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const MapScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const MapScreen(hideBackButton: true)),
         );
         break;
     }
@@ -480,8 +494,12 @@ class _ChannelsScreenState extends State<ChannelsScreen>
         filtered.sort((a, b) {
           final aMessages = connector.getChannelMessages(a);
           final bMessages = connector.getChannelMessages(b);
-          final aLast = aMessages.isEmpty ? DateTime(1970) : aMessages.last.timestamp;
-          final bLast = bMessages.isEmpty ? DateTime(1970) : bMessages.last.timestamp;
+          final aLast = aMessages.isEmpty
+              ? DateTime(1970)
+              : aMessages.last.timestamp;
+          final bLast = bMessages.isEmpty
+              ? DateTime(1970)
+              : bMessages.last.timestamp;
           final timeCompare = bLast.compareTo(aLast);
           if (timeCompare != 0) return timeCompare;
           return compareByName(a, b);
@@ -505,7 +523,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   }
 
   String _normalizeChannelName(Channel channel) {
-    if (channel.name.isEmpty) return 'Channel ${channel.index}'; // Fallback for sorting
+    if (channel.name.isEmpty)
+      return 'Channel ${channel.index}'; // Fallback for sorting
     final trimmed = channel.name.trim();
     if (trimmed.startsWith('#') && trimmed.length > 1) {
       return trimmed.substring(1);
@@ -515,7 +534,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
 
   void _showAddChannelDialog(BuildContext context) {
     final connector = context.read<MeshCoreConnector>();
-    final nextIndex = _findNextAvailableIndex(connector.channels, connector.maxChannels);
+    final nextIndex = _findNextAvailableIndex(
+      connector.channels,
+      connector.maxChannels,
+    );
     final hasPublicChannel = connector.channels.any((c) => c.isPublicChannel);
     int? selectedOption;
     final nameController = TextEditingController();
@@ -537,12 +559,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             return ListTile(
               leading: CircleAvatar(
                 backgroundColor: enabled
-                    ? (isSelected ? Theme.of(dialogContext).colorScheme.primaryContainer : null)
+                    ? (isSelected
+                          ? Theme.of(dialogContext).colorScheme.primaryContainer
+                          : null)
                     : Colors.grey.withValues(alpha: 0.2),
                 child: Icon(
                   icon,
                   color: enabled
-                      ? (isSelected ? Theme.of(dialogContext).colorScheme.primary : null)
+                      ? (isSelected
+                            ? Theme.of(dialogContext).colorScheme.primary
+                            : null)
                       : Colors.grey,
                 ),
               ),
@@ -575,7 +601,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: TextField(
                         controller: nameController,
                         decoration: InputDecoration(
@@ -594,8 +623,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                               onPressed: () {
                                 final name = nameController.text.trim();
                                 if (name.isEmpty) {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    SnackBar(content: Text(dialogContext.l10n.channels_enterChannelName)),
+                                  ScaffoldMessenger.of(
+                                    dialogContext,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        dialogContext
+                                            .l10n
+                                            .channels_enterChannelName,
+                                      ),
+                                    ),
                                   );
                                   return;
                                 }
@@ -608,7 +645,13 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 connector.setChannel(nextIndex, name, psk);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(context.l10n.channels_channelAdded(name))),
+                                    SnackBar(
+                                      content: Text(
+                                        context.l10n.channels_channelAdded(
+                                          name,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -625,7 +668,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: TextField(
                         controller: nameController,
                         decoration: InputDecoration(
@@ -636,7 +682,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: TextField(
                         controller: pskController,
                         decoration: InputDecoration(
@@ -655,8 +704,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 final name = nameController.text.trim();
                                 final pskHex = pskController.text.trim();
                                 if (name.isEmpty) {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    SnackBar(content: Text(dialogContext.l10n.channels_enterChannelName)),
+                                  ScaffoldMessenger.of(
+                                    dialogContext,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        dialogContext
+                                            .l10n
+                                            .channels_enterChannelName,
+                                      ),
+                                    ),
                                   );
                                   return;
                                 }
@@ -664,8 +721,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 try {
                                   psk = Channel.parsePskHex(pskHex);
                                 } on FormatException {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    SnackBar(content: Text(dialogContext.l10n.channels_pskMustBe32Hex)),
+                                  ScaffoldMessenger.of(
+                                    dialogContext,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        dialogContext
+                                            .l10n
+                                            .channels_pskMustBe32Hex,
+                                      ),
+                                    ),
                                   );
                                   return;
                                 }
@@ -673,7 +738,13 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 connector.setChannel(nextIndex, name, psk);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(context.l10n.channels_channelAdded(name))),
+                                    SnackBar(
+                                      content: Text(
+                                        context.l10n.channels_channelAdded(
+                                          name,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -688,18 +759,27 @@ class _ChannelsScreenState extends State<ChannelsScreen>
 
               case 2: // Join Public Channel
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            final psk = Channel.parsePskHex(Channel.publicChannelPsk);
+                            final psk = Channel.parsePskHex(
+                              Channel.publicChannelPsk,
+                            );
                             Navigator.pop(dialogContext);
                             connector.setChannel(nextIndex, 'Public', psk);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(context.l10n.channels_publicChannelAdded)),
+                                SnackBar(
+                                  content: Text(
+                                    context.l10n.channels_publicChannelAdded,
+                                  ),
+                                ),
                               );
                             }
                           },
@@ -714,7 +794,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: TextField(
                         controller: hashtagController,
                         decoration: InputDecoration(
@@ -735,19 +818,37 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                               onPressed: () {
                                 var hashtag = hashtagController.text.trim();
                                 if (hashtag.isEmpty) {
-                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                    SnackBar(content: Text(dialogContext.l10n.channels_enterChannelName)),
+                                  ScaffoldMessenger.of(
+                                    dialogContext,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        dialogContext
+                                            .l10n
+                                            .channels_enterChannelName,
+                                      ),
+                                    ),
                                   );
                                   return;
                                 }
                                 // Normalize hashtag name
-                                final name = hashtag.startsWith('#') ? hashtag : '#$hashtag';
-                                final psk = Channel.derivePskFromHashtag(hashtag);
+                                final name = hashtag.startsWith('#')
+                                    ? hashtag
+                                    : '#$hashtag';
+                                final psk = Channel.derivePskFromHashtag(
+                                  hashtag,
+                                );
                                 Navigator.pop(dialogContext);
                                 connector.setChannel(nextIndex, name, psk);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(context.l10n.channels_channelAdded(name))),
+                                    SnackBar(
+                                      content: Text(
+                                        context.l10n.channels_channelAdded(
+                                          name,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -778,7 +879,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       optionIndex: 0,
                       icon: Icons.add,
                       title: dialogContext.l10n.channels_createPrivateChannel,
-                      subtitle: dialogContext.l10n.channels_createPrivateChannelDesc,
+                      subtitle:
+                          dialogContext.l10n.channels_createPrivateChannelDesc,
                     ),
                     if (selectedOption == 0) buildExpandedContent()!,
                     const Divider(height: 1),
@@ -786,7 +888,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       optionIndex: 1,
                       icon: Icons.lock,
                       title: dialogContext.l10n.channels_joinPrivateChannel,
-                      subtitle: dialogContext.l10n.channels_joinPrivateChannelDesc,
+                      subtitle:
+                          dialogContext.l10n.channels_joinPrivateChannelDesc,
                     ),
                     if (selectedOption == 1) buildExpandedContent()!,
                     if (!hasPublicChannel) ...[
@@ -795,7 +898,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                         optionIndex: 2,
                         icon: Icons.public,
                         title: dialogContext.l10n.channels_joinPublicChannel,
-                        subtitle: dialogContext.l10n.channels_joinPublicChannelDesc,
+                        subtitle:
+                            dialogContext.l10n.channels_joinPublicChannelDesc,
                       ),
                       if (selectedOption == 2) buildExpandedContent()!,
                     ],
@@ -804,7 +908,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       optionIndex: 3,
                       icon: Icons.tag,
                       title: dialogContext.l10n.channels_joinHashtagChannel,
-                      subtitle: dialogContext.l10n.channels_joinHashtagChannelDesc,
+                      subtitle:
+                          dialogContext.l10n.channels_joinHashtagChannelDesc,
                     ),
                     if (selectedOption == 3) buildExpandedContent()!,
                     const Divider(height: 1),
@@ -812,7 +917,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       optionIndex: 4,
                       icon: Icons.qr_code,
                       title: dialogContext.l10n.channels_scanQrCode,
-                      subtitle: dialogContext.l10n.channels_scanQrCodeComingSoon,
+                      subtitle:
+                          dialogContext.l10n.channels_scanQrCodeComingSoon,
                       enabled: false,
                     ),
                   ],
@@ -844,7 +950,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => AlertDialog(
-          title: Text(dialogContext.l10n.channels_editChannelTitle(channel.index)),
+          title: Text(
+            dialogContext.l10n.channels_editChannelTitle(channel.index),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -902,7 +1010,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   psk = Channel.parsePskHex(pskHex);
                 } on FormatException {
                   ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    SnackBar(content: Text(dialogContext.l10n.channels_pskMustBe32Hex)),
+                    SnackBar(
+                      content: Text(dialogContext.l10n.channels_pskMustBe32Hex),
+                    ),
                   );
                   return;
                 }
@@ -911,7 +1021,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 connector.setChannel(channel.index, name, psk);
                 connector.setChannelSmazEnabled(channel.index, smazEnabled);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(context.l10n.channels_channelUpdated(name))),
+                  SnackBar(
+                    content: Text(context.l10n.channels_channelUpdated(name)),
+                  ),
                 );
               },
               child: Text(dialogContext.l10n.common_save),
@@ -931,7 +1043,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(dialogContext.l10n.channels_deleteChannel),
-        content: Text(dialogContext.l10n.channels_deleteChannelConfirm(channel.name)),
+        content: Text(
+          dialogContext.l10n.channels_deleteChannelConfirm(channel.name),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
@@ -942,10 +1056,17 @@ class _ChannelsScreenState extends State<ChannelsScreen>
               Navigator.pop(dialogContext);
               connector.deleteChannel(channel.index);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.l10n.channels_channelDeleted(channel.name))),
+                SnackBar(
+                  content: Text(
+                    context.l10n.channels_channelDeleted(channel.name),
+                  ),
+                ),
               );
             },
-            child: Text(dialogContext.l10n.common_delete, style: const TextStyle(color: Colors.red)),
+            child: Text(
+              dialogContext.l10n.common_delete,
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

@@ -43,7 +43,9 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.read<MeshCoreConnector>().setActiveContact(widget.contact.publicKeyHex);
+      context.read<MeshCoreConnector>().setActiveContact(
+        widget.contact.publicKeyHex,
+      );
 
       // Scroll to bottom when opening chat use SchedulerBinding for next frame
       if (_scrollController.hasClients) {
@@ -67,12 +69,15 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Consumer2<PathHistoryService, MeshCoreConnector>(
           builder: (context, pathService, connector, _) {
             final contact = _resolveContact(connector);
-            final unreadCount = connector.getUnreadCountForContactKey(widget.contact.publicKeyHex);
+            final unreadCount = connector.getUnreadCountForContactKey(
+              widget.contact.publicKeyHex,
+            );
             final unreadLabel = context.l10n.chat_unread(unreadCount);
             final pathLabel = _currentPathLabel(contact);
 
             // Show path details if we have path data (from device or override)
-            final hasPathData = contact.path.isNotEmpty || contact.pathOverrideBytes != null;
+            final hasPathData =
+                contact.path.isNotEmpty || contact.pathOverrideBytes != null;
             final effectivePath = contact.pathOverrideBytes ?? contact.path;
 
             return Column(
@@ -82,7 +87,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 Text(contact.name),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: hasPathData ? () => _showFullPathDialog(context, effectivePath) : null,
+                  onTap: hasPathData
+                      ? () => _showFullPathDialog(context, effectivePath)
+                      : null,
                   child: Text(
                     '$pathLabel • $unreadLabel',
                     overflow: TextOverflow.ellipsis,
@@ -120,12 +127,20 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'auto',
                     child: Row(
                       children: [
-                        Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                        Icon(
+                          Icons.auto_mode,
+                          size: 20,
+                          color: !isFloodMode
+                              ? Theme.of(context).primaryColor
+                              : null,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           context.l10n.chat_autoUseSavedPath,
                           style: TextStyle(
-                            fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: !isFloodMode
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ],
@@ -135,12 +150,20 @@ class _ChatScreenState extends State<ChatScreen> {
                     value: 'flood',
                     child: Row(
                       children: [
-                        Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                        Icon(
+                          Icons.waves,
+                          size: 20,
+                          color: isFloodMode
+                              ? Theme.of(context).primaryColor
+                              : null,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           context.l10n.chat_forceFloodMode,
                           style: TextStyle(
-                            fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isFloodMode
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ],
@@ -200,7 +223,10 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildMessageList(List<Message> messages, MeshCoreConnector connector) {
+  Widget _buildMessageList(
+    List<Message> messages,
+    MeshCoreConnector connector,
+  ) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -212,14 +238,21 @@ class _ChatScreenState extends State<ChatScreen> {
         if (widget.contact.type == advTypeRoom) {
           contact = _resolveContactFrom4Bytes(
             connector,
-            message.fourByteRoomContactKey.isEmpty ? Uint8List.fromList([0, 0, 0, 0]) : message.fourByteRoomContactKey,
+            message.fourByteRoomContactKey.isEmpty
+                ? Uint8List.fromList([0, 0, 0, 0])
+                : message.fourByteRoomContactKey,
           );
-          fourByteHex = message.fourByteRoomContactKey.map((b) => b.toRadixString(16).padLeft(2, '0')).join().toUpperCase();
+          fourByteHex = message.fourByteRoomContactKey
+              .map((b) => b.toRadixString(16).padLeft(2, '0'))
+              .join()
+              .toUpperCase();
         }
 
         return _MessageBubble(
           message: message,
-          senderName: widget.contact.type == advTypeRoom ? "${contact.name} [$fourByteHex]" : contact.name,
+          senderName: widget.contact.type == advTypeRoom
+              ? "${contact.name} [$fourByteHex]"
+              : contact.name,
           isRoomServer: widget.contact.type == advTypeRoom,
           onTap: () => _openMessagePath(message, contact),
           onLongPress: () => _showMessageActions(message, contact),
@@ -235,9 +268,7 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          top: BorderSide(color: Theme.of(context).dividerColor),
-        ),
+        border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: SafeArea(
         child: Row(
@@ -257,10 +288,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         Expanded(
                           child: GifMessage(
-                            url: 'https://media.giphy.com/media/$gifId/giphy.gif',
-                            backgroundColor: colorScheme.surfaceContainerHighest,
-                            fallbackTextColor:
-                                colorScheme.onSurface.withValues(alpha: 0.6),
+                            url:
+                                'https://media.giphy.com/media/$gifId/giphy.gif',
+                            backgroundColor:
+                                colorScheme.surfaceContainerHighest,
+                            fallbackTextColor: colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
                             width: 160,
                             height: 110,
                           ),
@@ -282,7 +316,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                       hintText: context.l10n.chat_typeMessage,
                       border: const OutlineInputBorder(),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(connector),
@@ -331,10 +368,7 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    connector.sendMessage(
-      widget.contact,
-      text,
-    );
+    connector.sendMessage(widget.contact, text);
     _textController.clear();
 
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -347,7 +381,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
   }
-
 
   void _showPathHistory(BuildContext context) {
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
@@ -373,13 +406,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (paths.isNotEmpty) ...[
                     Text(
                       context.l10n.chat_recentAckPaths,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                     if (paths.length >= 100) ...[
                       const SizedBox(height: 8),
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.amber[100],
                           borderRadius: BorderRadius.circular(8),
@@ -398,7 +437,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           dense: true,
                           leading: CircleAvatar(
                             radius: 16,
-                            backgroundColor: path.wasFloodDiscovery ? Colors.blue : Colors.green,
+                            backgroundColor: path.wasFloodDiscovery
+                                ? Colors.blue
+                                : Colors.green,
                             child: Text(
                               '${path.hopCount}',
                               style: const TextStyle(fontSize: 12),
@@ -426,23 +467,36 @@ class _ChatScreenState extends State<ChatScreen> {
                                 },
                               ),
                               path.wasFloodDiscovery
-                                  ? const Icon(Icons.waves, size: 16, color: Colors.grey)
-                                  : const Icon(Icons.route, size: 16, color: Colors.grey),
+                                  ? const Icon(
+                                      Icons.waves,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    )
+                                  : const Icon(
+                                      Icons.route,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
                             ],
                           ),
-                          onLongPress: () => _showFullPathDialog(context, path.pathBytes),
+                          onLongPress: () =>
+                              _showFullPathDialog(context, path.pathBytes),
                           onTap: () async {
                             if (path.pathBytes.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(context.l10n.chat_pathDetailsNotAvailable),
+                                  content: Text(
+                                    context.l10n.chat_pathDetailsNotAvailable,
+                                  ),
                                   duration: const Duration(seconds: 2),
                                 ),
                               );
                               return;
                             }
 
-                            final pathBytes = Uint8List.fromList(path.pathBytes);
+                            final pathBytes = Uint8List.fromList(
+                              path.pathBytes,
+                            );
                             final pathLength = path.pathBytes.length;
 
                             // Set the path override to persist user's choice
@@ -472,7 +526,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   const SizedBox(height: 8),
                   Text(
                     context.l10n.chat_pathActions,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   ListTile(
@@ -482,8 +539,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.purple,
                       child: Icon(Icons.edit_road, size: 16),
                     ),
-                    title: Text(context.l10n.chat_setCustomPath, style: const TextStyle(fontSize: 14)),
-                    subtitle: Text(context.l10n.chat_setCustomPathSubtitle, style: const TextStyle(fontSize: 11)),
+                    title: Text(
+                      context.l10n.chat_setCustomPath,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    subtitle: Text(
+                      context.l10n.chat_setCustomPathSubtitle,
+                      style: const TextStyle(fontSize: 11),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       _showCustomPathDialog(context);
@@ -496,8 +559,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.orange,
                       child: Icon(Icons.clear_all, size: 16),
                     ),
-                    title: Text(context.l10n.chat_clearPath, style: const TextStyle(fontSize: 14)),
-                    subtitle: Text(context.l10n.chat_clearPathSubtitle, style: const TextStyle(fontSize: 11)),
+                    title: Text(
+                      context.l10n.chat_clearPath,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    subtitle: Text(
+                      context.l10n.chat_clearPathSubtitle,
+                      style: const TextStyle(fontSize: 11),
+                    ),
                     onTap: () async {
                       await connector.clearContactPath(widget.contact);
                       if (!context.mounted) return;
@@ -517,10 +586,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.blue,
                       child: Icon(Icons.waves, size: 16),
                     ),
-                    title: Text(context.l10n.chat_forceFloodMode, style: const TextStyle(fontSize: 14)),
-                    subtitle: Text(context.l10n.chat_floodModeSubtitle, style: const TextStyle(fontSize: 11)),
+                    title: Text(
+                      context.l10n.chat_forceFloodMode,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    subtitle: Text(
+                      context.l10n.chat_floodModeSubtitle,
+                      style: const TextStyle(fontSize: 11),
+                    ),
                     onTap: () async {
-                      await connector.setPathOverride(widget.contact, pathLen: -1);
+                      await connector.setPathOverride(
+                        widget.contact,
+                        pathLen: -1,
+                      );
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -549,7 +627,8 @@ class _ChatScreenState extends State<ChatScreen> {
   String _formatRelativeTime(DateTime time) {
     final diff = DateTime.now().difference(time);
     if (diff.inSeconds < 60) return context.l10n.time_justNow;
-    if (diff.inMinutes < 60) return context.l10n.time_minutesAgo(diff.inMinutes);
+    if (diff.inMinutes < 60)
+      return context.l10n.time_minutesAgo(diff.inMinutes);
     if (diff.inHours < 24) return context.l10n.time_hoursAgo(diff.inHours);
     return context.l10n.time_daysAgo(diff.inDays);
   }
@@ -591,7 +670,10 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Contact _resolveContactFrom4Bytes(MeshCoreConnector connector, Uint8List key4Bytes) {
+  Contact _resolveContactFrom4Bytes(
+    MeshCoreConnector connector,
+    Uint8List key4Bytes,
+  ) {
     return connector.contacts.firstWhere(
       (c) => listEquals(c.publicKey.sublist(0, 4), key4Bytes.sublist(0, 4)),
       orElse: () => widget.contact,
@@ -625,12 +707,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
     final status = !connector.isConnected
         ? context.l10n.chat_pathSavedLocally
-        : (verified ? context.l10n.chat_pathDeviceConfirmed : context.l10n.chat_pathDeviceNotConfirmed);
+        : (verified
+              ? context.l10n.chat_pathDeviceConfirmed
+              : context.l10n.chat_pathDeviceNotConfirmed);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          context.l10n.chat_pathSetHops(hopCount, status),
-        ),
+        content: Text(context.l10n.chat_pathSetHops(hopCount, status)),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -645,7 +727,9 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (context) => Consumer<MeshCoreConnector>(
         builder: (context, connector, _) {
           final contact = _resolveContact(connector);
-          final smazEnabled = connector.isContactSmazEnabled(contact.publicKeyHex);
+          final smazEnabled = connector.isContactSmazEnabled(
+            contact.publicKeyHex,
+          );
 
           return AlertDialog(
             title: Text(contact.name),
@@ -661,7 +745,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       context.l10n.chat_location,
                       '${contact.latitude?.toStringAsFixed(4)}, ${contact.longitude?.toStringAsFixed(4)}',
                     ),
-                  _buildInfoRow(context.l10n.chat_publicKey, '${contact.publicKeyHex.substring(0, 16)}...'),
+                  _buildInfoRow(
+                    context.l10n.chat_publicKey,
+                    '${contact.publicKeyHex.substring(0, 16)}...',
+                  ),
                   const Divider(),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
@@ -669,7 +756,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     subtitle: Text(context.l10n.chat_compressOutgoingMessages),
                     value: smazEnabled,
                     onChanged: (value) {
-                      connector.setContactSmazEnabled(contact.publicKeyHex, value);
+                      connector.setContactSmazEnabled(
+                        contact.publicKeyHex,
+                        value,
+                      );
                     },
                   ),
                 ],
@@ -716,7 +806,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
 
     final currentContact = _resolveContact(connector);
-    if (currentContact.pathLength > 0 && currentContact.path.isEmpty && connector.isConnected) {
+    if (currentContact.pathLength > 0 &&
+        currentContact.path.isEmpty &&
+        connector.isConnected) {
       connector.getContacts();
     }
 
@@ -737,19 +829,31 @@ class _ChatScreenState extends State<ChatScreen> {
       onRefresh: connector.isConnected ? connector.getContacts : null,
     );
 
-    appLogger.info('PathSelectionDialog returned: ${result?.length ?? 0} bytes, mounted: $mounted', tag: 'ChatScreen');
+    appLogger.info(
+      'PathSelectionDialog returned: ${result?.length ?? 0} bytes, mounted: $mounted',
+      tag: 'ChatScreen',
+    );
 
     if (result == null) {
-      appLogger.info('PathSelectionDialog was cancelled or returned null', tag: 'ChatScreen');
+      appLogger.info(
+        'PathSelectionDialog was cancelled or returned null',
+        tag: 'ChatScreen',
+      );
       return;
     }
 
     if (!mounted) {
-      appLogger.warn('Widget not mounted after dialog, cannot set path', tag: 'ChatScreen');
+      appLogger.warn(
+        'Widget not mounted after dialog, cannot set path',
+        tag: 'ChatScreen',
+      );
       return;
     }
 
-    appLogger.info('Calling setPathOverride for ${widget.contact.name}', tag: 'ChatScreen');
+    appLogger.info(
+      'Calling setPathOverride for ${widget.contact.name}',
+      tag: 'ChatScreen',
+    );
     await connector.setPathOverride(
       widget.contact,
       pathLen: result.length,
@@ -760,7 +864,6 @@ class _ChatScreenState extends State<ChatScreen> {
     if (!mounted) return;
     await _notifyPathSet(connector, widget.contact, result, result.length);
   }
-
 
   void _openMessagePath(Message message, Contact contact) {
     final connector = context.read<MeshCoreConnector>();
@@ -826,8 +929,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 await _deleteMessage(message);
               },
             ),
-            if (message.isOutgoing &&
-                message.status == MessageStatus.failed)
+            if (message.isOutgoing && message.status == MessageStatus.failed)
               ListTile(
                 leading: const Icon(Icons.refresh),
                 title: Text(context.l10n.common_retry),
@@ -858,29 +960,26 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _copyMessageText(String text) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.chat_messageCopied)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.chat_messageCopied)));
   }
 
   Future<void> _deleteMessage(Message message) async {
     await context.read<MeshCoreConnector>().deleteMessage(message);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.chat_messageDeleted)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.chat_messageDeleted)));
   }
 
   void _retryMessage(Message message) {
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
     // Retry using the contact's current path override setting
-    connector.sendMessage(
-      widget.contact,
-      message.text,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.chat_retryingMessage)),
-    );
+    connector.sendMessage(widget.contact, message.text);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.chat_retryingMessage)));
   }
 
   void _showEmojiPicker(Message message) {
@@ -899,7 +998,8 @@ class _ChatScreenState extends State<ChatScreen> {
     final connector = context.read<MeshCoreConnector>();
     // Send reaction with messageId if available, otherwise use lightweight format
     // Parser will extract reactionKey (timestamp_senderPrefix) for deduplication
-    final messageId = message.messageId ??
+    final messageId =
+        message.messageId ??
         '${message.timestamp.millisecondsSinceEpoch}_${message.senderKeyHex.substring(0, 8)}';
     final reactionText = 'r:$messageId:$emoji';
     connector.sendMessage(widget.contact, reactionText);
@@ -930,7 +1030,9 @@ class _MessageBubble extends StatelessWidget {
     final isFailed = message.status == MessageStatus.failed;
     final bubbleColor = isFailed
         ? colorScheme.errorContainer
-        : (isOutgoing ? colorScheme.primary : colorScheme.surfaceContainerHighest);
+        : (isOutgoing
+              ? colorScheme.primary
+              : colorScheme.surfaceContainerHighest);
     final textColor = isFailed
         ? colorScheme.onErrorContainer
         : (isOutgoing ? colorScheme.onPrimary : colorScheme.onSurface);
@@ -942,13 +1044,17 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
-        crossAxisAlignment: isOutgoing ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isOutgoing
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           GestureDetector(
             onTap: onTap,
             onLongPress: onLongPress,
             child: Row(
-              mainAxisAlignment: isOutgoing ? MainAxisAlignment.end : MainAxisAlignment.start,
+              mainAxisAlignment: isOutgoing
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!isOutgoing) ...[
@@ -957,103 +1063,103 @@ class _MessageBubble extends StatelessWidget {
                 ],
                 Flexible(
                   child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.65,
-                ),
-                decoration: BoxDecoration(
-                  color: bubbleColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!isOutgoing) ...[
-                      Text(
-                        senderName,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                    if (poi != null)
-                      _buildPoiMessage(context, poi, textColor, metaColor)
-                    else if (gifId != null)
-                      GifMessage(
-                        url: 'https://media.giphy.com/media/$gifId/giphy.gif',
-                        backgroundColor: bubbleColor,
-                        fallbackTextColor: textColor.withValues(alpha: 0.7),
-                      )
-                    else
-                      Text(
-                        messageText,
-                        style: TextStyle(
-                          color: textColor,
-                        ),
-                      ),
-                    if (isOutgoing && message.retryCount > 0) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        context.l10n.chat_retryCount(message.retryCount, 4),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: metaColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.65,
+                    ),
+                    decoration: BoxDecoration(
+                      color: bubbleColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _formatTime(message.timestamp),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: metaColor,
-                          ),
-                        ),
-                        if (isOutgoing) ...[
-                          const SizedBox(width: 4),
-                          _buildStatusIcon(metaColor),
-                        ],
-                        if (message.tripTimeMs != null &&
-                            message.status == MessageStatus.delivered) ...[
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.speed,
-                            size: 10,
-                            color: isOutgoing ? metaColor : Colors.green[700],
-                          ),
+                        if (!isOutgoing) ...[
                           Text(
-                            '${(message.tripTimeMs! / 1000).toStringAsFixed(1)}s',
+                            senderName,
                             style: TextStyle(
-                              fontSize: 9,
-                              color: isOutgoing ? metaColor : Colors.green[700],
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
+                        if (poi != null)
+                          _buildPoiMessage(context, poi, textColor, metaColor)
+                        else if (gifId != null)
+                          GifMessage(
+                            url:
+                                'https://media.giphy.com/media/$gifId/giphy.gif',
+                            backgroundColor: bubbleColor,
+                            fallbackTextColor: textColor.withValues(alpha: 0.7),
+                          )
+                        else
+                          Text(messageText, style: TextStyle(color: textColor)),
+                        if (isOutgoing && message.retryCount > 0) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            context.l10n.chat_retryCount(message.retryCount, 4),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: metaColor,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              _formatTime(message.timestamp),
+                              style: TextStyle(fontSize: 10, color: metaColor),
+                            ),
+                            if (isOutgoing) ...[
+                              const SizedBox(width: 4),
+                              _buildStatusIcon(metaColor),
+                            ],
+                            if (message.tripTimeMs != null &&
+                                message.status == MessageStatus.delivered) ...[
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.speed,
+                                size: 10,
+                                color: isOutgoing
+                                    ? metaColor
+                                    : Colors.green[700],
+                              ),
+                              Text(
+                                '${(message.tripTimeMs! / 1000).toStringAsFixed(1)}s',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  color: isOutgoing
+                                      ? metaColor
+                                      : Colors.green[700],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
+          if (message.reactions.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: EdgeInsets.only(left: isOutgoing ? 0 : 48),
+              child: _buildReactionsDisplay(context, message, colorScheme),
             ),
           ],
-        ),
-      ),
-      if (message.reactions.isNotEmpty) ...[
-        const SizedBox(height: 4),
-        Padding(
-          padding: EdgeInsets.only(left: isOutgoing ? 0 : 48),
-          child: _buildReactionsDisplay(context, message, colorScheme),
-        ),
-      ],
-    ],
+        ],
       ),
     );
   }
@@ -1066,8 +1172,9 @@ class _MessageBubble extends StatelessWidget {
 
   _PoiInfo? _parsePoiMessage(String text) {
     final trimmed = text.trim();
-    final match = RegExp(r'^m:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|.*$')
-        .firstMatch(trimmed);
+    final match = RegExp(
+      r'^m:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|.*$',
+    ).firstMatch(trimmed);
     if (match == null) return null;
     final lat = double.tryParse(match.group(1) ?? '');
     final lon = double.tryParse(match.group(2) ?? '');
@@ -1108,18 +1215,12 @@ class _MessageBubble extends StatelessWidget {
             children: [
               Text(
                 context.l10n.chat_poiShared,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
               ),
               if (poi.label.isNotEmpty)
                 Text(
                   poi.label,
-                  style: TextStyle(
-                    color: metaColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: metaColor, fontSize: 12),
                 ),
             ],
           ),
@@ -1128,7 +1229,11 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildReactionsDisplay(BuildContext context, Message message, ColorScheme colorScheme) {
+  Widget _buildReactionsDisplay(
+    BuildContext context,
+    Message message,
+    ColorScheme colorScheme,
+  ) {
     return Wrap(
       spacing: 6,
       runSpacing: 6,
@@ -1149,10 +1254,7 @@ class _MessageBubble extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(emoji, style: const TextStyle(fontSize: 16)),
               if (count > 1) ...[
                 const SizedBox(width: 4),
                 Text(
@@ -1236,11 +1338,7 @@ class _MessageBubble extends StatelessWidget {
         break;
     }
 
-    return Icon(
-      icon,
-      size: 12,
-      color: color,
-    );
+    return Icon(icon, size: 12, color: color);
   }
 
   String _formatTime(DateTime time) {
@@ -1255,9 +1353,5 @@ class _PoiInfo {
   final double lon;
   final String label;
 
-  const _PoiInfo({
-    required this.lat,
-    required this.lon,
-    required this.label,
-  });
+  const _PoiInfo({required this.lat, required this.lon, required this.label});
 }

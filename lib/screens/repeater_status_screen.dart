@@ -28,7 +28,8 @@ class RepeaterStatusScreen extends StatefulWidget {
 class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
   static const int _statusPayloadOffset = 8;
   static const int _statusStatsSize = 52;
-  static const int _statusResponseBytes = _statusPayloadOffset + _statusStatsSize;
+  static const int _statusResponseBytes =
+      _statusPayloadOffset + _statusStatsSize;
 
   bool _isLoading = false;
   StreamSubscription<Uint8List>? _frameSubscription;
@@ -293,7 +294,9 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.l10n.repeater_errorLoadingStatus(e.toString())),
+            content: Text(
+              context.l10n.repeater_errorLoadingStatus(e.toString()),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -327,7 +330,10 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
             Text(l10n.repeater_statusTitle),
             Text(
               repeater.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ],
         ),
@@ -348,12 +354,20 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
                 value: 'auto',
                 child: Row(
                   children: [
-                    Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.auto_mode,
+                      size: 20,
+                      color: !isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.repeater_autoUseSavedPath,
                       style: TextStyle(
-                        fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: !isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -363,12 +377,20 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
                 value: 'flood',
                 child: Row(
                   children: [
-                    Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.waves,
+                      size: 20,
+                      color: isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.repeater_forceFloodMode,
                       style: TextStyle(
-                        fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -379,7 +401,8 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           IconButton(
             icon: const Icon(Icons.timeline),
             tooltip: l10n.repeater_pathManagement,
-            onPressed: () => PathManagementDialog.show(context, contact: repeater),
+            onPressed: () =>
+                PathManagementDialog.show(context, contact: repeater),
           ),
           IconButton(
             icon: _isLoading
@@ -423,11 +446,17 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: Theme.of(context).textTheme.headlineSmall?.color),
+                Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).textTheme.headlineSmall?.color,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   l10n.repeater_systemInformation,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -453,18 +482,30 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.radio, color: Theme.of(context).textTheme.headlineSmall?.color),
+                Icon(
+                  Icons.radio,
+                  color: Theme.of(context).textTheme.headlineSmall?.color,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   l10n.repeater_radioStatistics,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
             const Divider(),
-            _buildInfoRow(l10n.repeater_lastRssi, _formatValue(_lastRssi, suffix: ' dB')),
+            _buildInfoRow(
+              l10n.repeater_lastRssi,
+              _formatValue(_lastRssi, suffix: ' dB'),
+            ),
             _buildInfoRow(l10n.repeater_lastSnr, _formatSnr(_lastSnr)),
-            _buildInfoRow(l10n.repeater_noiseFloor, _formatValue(_noiseFloor, suffix: ' dB')),
+            _buildInfoRow(
+              l10n.repeater_noiseFloor,
+              _formatValue(_noiseFloor, suffix: ' dB'),
+            ),
             _buildInfoRow(l10n.repeater_txAirtime, _formatDuration(_txAirSecs)),
             _buildInfoRow(l10n.repeater_rxAirtime, _formatDuration(_rxAirSecs)),
           ],
@@ -483,11 +524,17 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.analytics, color: Theme.of(context).textTheme.headlineSmall?.color),
+                Icon(
+                  Icons.analytics,
+                  color: Theme.of(context).textTheme.headlineSmall?.color,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   l10n.repeater_packetStatistics,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -561,7 +608,8 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
     if (_statusRequestedAt == null) return '—';
     final dt = _statusRequestedAt!;
     final date = '${dt.day}/${dt.month}/${dt.year}';
-    final time = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     return '$date $time';
   }
 
@@ -598,7 +646,8 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
       final direct = _formatValue(_dupDirect);
       return l10n.repeater_duplicatesFloodDirect(flood, direct);
     }
-    if (_packetsRecv == null || _floodRx == null || _directRx == null) return '—';
+    if (_packetsRecv == null || _floodRx == null || _directRx == null)
+      return '—';
     final dupTotal = _packetsRecv! - _floodRx! - _directRx!;
     if (dupTotal < 0) return '—';
     return l10n.repeater_duplicatesTotal(dupTotal);

@@ -43,7 +43,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppearanceCard(BuildContext context, AppSettingsService settingsService) {
+  Widget _buildAppearanceCard(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +61,9 @@ class AppSettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.brightness_6_outlined),
             title: Text(context.l10n.appSettings_theme),
-            subtitle: Text(_themeModeLabel(context, settingsService.settings.themeMode)),
+            subtitle: Text(
+              _themeModeLabel(context, settingsService.settings.themeMode),
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showThemeModeDialog(context, settingsService),
           ),
@@ -66,7 +71,12 @@ class AppSettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.language_outlined),
             title: Text(context.l10n.appSettings_language),
-            subtitle: Text(_languageLabel(context, settingsService.settings.languageOverride)),
+            subtitle: Text(
+              _languageLabel(
+                context,
+                settingsService.settings.languageOverride,
+              ),
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLanguageDialog(context, settingsService),
           ),
@@ -75,7 +85,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationsCard(BuildContext context, AppSettingsService settingsService) {
+  Widget _buildNotificationsCard(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,17 +103,22 @@ class AppSettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: const Icon(Icons.notifications_outlined),
             title: Text(context.l10n.appSettings_enableNotifications),
-            subtitle: Text(context.l10n.appSettings_enableNotificationsSubtitle),
+            subtitle: Text(
+              context.l10n.appSettings_enableNotificationsSubtitle,
+            ),
             value: settingsService.settings.notificationsEnabled,
             onChanged: (value) async {
               if (value) {
                 // Request permission when enabling
-                final granted = await NotificationService().requestPermissions();
+                final granted = await NotificationService()
+                    .requestPermissions();
                 if (!granted) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(context.l10n.appSettings_notificationPermissionDenied),
+                        content: Text(
+                          context.l10n.appSettings_notificationPermissionDenied,
+                        ),
                         duration: const Duration(seconds: 2),
                       ),
                     );
@@ -113,9 +131,11 @@ class AppSettingsScreen extends StatelessWidget {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(value
-                        ? context.l10n.appSettings_notificationsEnabled
-                        : context.l10n.appSettings_notificationsDisabled),
+                    content: Text(
+                      value
+                          ? context.l10n.appSettings_notificationsEnabled
+                          : context.l10n.appSettings_notificationsDisabled,
+                    ),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -126,18 +146,24 @@ class AppSettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: Icon(
               Icons.message_outlined,
-              color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+              color: settingsService.settings.notificationsEnabled
+                  ? null
+                  : Colors.grey,
             ),
             title: Text(
               context.l10n.appSettings_messageNotifications,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             subtitle: Text(
               context.l10n.appSettings_messageNotificationsSubtitle,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             value: settingsService.settings.notifyOnNewMessage,
@@ -151,18 +177,24 @@ class AppSettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: Icon(
               Icons.forum_outlined,
-              color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+              color: settingsService.settings.notificationsEnabled
+                  ? null
+                  : Colors.grey,
             ),
             title: Text(
               context.l10n.appSettings_channelMessageNotifications,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             subtitle: Text(
               context.l10n.appSettings_channelMessageNotificationsSubtitle,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             value: settingsService.settings.notifyOnNewChannelMessage,
@@ -176,18 +208,24 @@ class AppSettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: Icon(
               Icons.cell_tower,
-              color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+              color: settingsService.settings.notificationsEnabled
+                  ? null
+                  : Colors.grey,
             ),
             title: Text(
               context.l10n.appSettings_advertisementNotifications,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             subtitle: Text(
               context.l10n.appSettings_advertisementNotificationsSubtitle,
               style: TextStyle(
-                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+                color: settingsService.settings.notificationsEnabled
+                    ? null
+                    : Colors.grey,
               ),
             ),
             value: settingsService.settings.notifyOnNewAdvert,
@@ -202,7 +240,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMessagingCard(BuildContext context, AppSettingsService settingsService) {
+  Widget _buildMessagingCard(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,15 +258,19 @@ class AppSettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: const Icon(Icons.refresh_outlined),
             title: Text(context.l10n.appSettings_clearPathOnMaxRetry),
-            subtitle: Text(context.l10n.appSettings_clearPathOnMaxRetrySubtitle),
+            subtitle: Text(
+              context.l10n.appSettings_clearPathOnMaxRetrySubtitle,
+            ),
             value: settingsService.settings.clearPathOnMaxRetry,
             onChanged: (value) {
               settingsService.setClearPathOnMaxRetry(value);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(value
-                      ? context.l10n.appSettings_pathsWillBeCleared
-                      : context.l10n.appSettings_pathsWillNotBeCleared),
+                  content: Text(
+                    value
+                        ? context.l10n.appSettings_pathsWillBeCleared
+                        : context.l10n.appSettings_pathsWillNotBeCleared,
+                  ),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -241,9 +286,11 @@ class AppSettingsScreen extends StatelessWidget {
               settingsService.setAutoRouteRotationEnabled(value);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(value
-                      ? context.l10n.appSettings_autoRouteRotationEnabled
-                      : context.l10n.appSettings_autoRouteRotationDisabled),
+                  content: Text(
+                    value
+                        ? context.l10n.appSettings_autoRouteRotationEnabled
+                        : context.l10n.appSettings_autoRouteRotationDisabled,
+                  ),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -254,7 +301,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMapSettingsCard(BuildContext context, AppSettingsService settingsService) {
+  Widget _buildMapSettingsCard(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +352,9 @@ class AppSettingsScreen extends StatelessWidget {
             subtitle: Text(
               settingsService.settings.mapTimeFilterHours == 0
                   ? context.l10n.appSettings_timeFilterShowAll
-                  : context.l10n.appSettings_timeFilterShowLast(settingsService.settings.mapTimeFilterHours.toInt()),
+                  : context.l10n.appSettings_timeFilterShowLast(
+                      settingsService.settings.mapTimeFilterHours.toInt(),
+                    ),
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showTimeFilterDialog(context, settingsService),
@@ -339,8 +391,9 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     final deviceId = connector.deviceId;
     final isConnected = connector.isConnected && deviceId != null;
-    final selection =
-        isConnected ? settingsService.batteryChemistryForDevice(deviceId) : 'nmc';
+    final selection = isConnected
+        ? settingsService.batteryChemistryForDevice(deviceId)
+        : 'nmc';
 
     return Card(
       child: Column(
@@ -358,7 +411,9 @@ class AppSettingsScreen extends StatelessWidget {
             title: Text(context.l10n.appSettings_batteryChemistry),
             subtitle: Text(
               isConnected
-                  ? context.l10n.appSettings_batteryChemistryPerDevice(connector.deviceDisplayName)
+                  ? context.l10n.appSettings_batteryChemistryPerDevice(
+                      connector.deviceDisplayName,
+                    )
                   : context.l10n.appSettings_batteryChemistryConnectFirst,
             ),
             trailing: DropdownButton<String>(
@@ -366,7 +421,10 @@ class AppSettingsScreen extends StatelessWidget {
               onChanged: isConnected
                   ? (value) {
                       if (value != null) {
-                        settingsService.setBatteryChemistryForDevice(deviceId, value);
+                        settingsService.setBatteryChemistryForDevice(
+                          deviceId,
+                          value,
+                        );
                       }
                     }
                   : null,
@@ -391,7 +449,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showThemeModeDialog(BuildContext context, AppSettingsService settingsService) {
+  void _showThemeModeDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -476,7 +537,10 @@ class AppSettingsScreen extends StatelessWidget {
     }
   }
 
-  void _showLanguageDialog(BuildContext context, AppSettingsService settingsService) {
+  void _showLanguageDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -561,7 +625,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showTimeFilterDialog(BuildContext context, AppSettingsService settingsService) {
+  void _showTimeFilterDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -581,33 +648,23 @@ class AppSettingsScreen extends StatelessWidget {
               const SizedBox(height: 16),
               ListTile(
                 title: Text(context.l10n.appSettings_allTime),
-                leading: Radio<double>(
-                  value: 0,
-                ),
+                leading: Radio<double>(value: 0),
               ),
               ListTile(
                 title: Text(context.l10n.appSettings_lastHour),
-                leading: Radio<double>(
-                  value: 1,
-                ),
+                leading: Radio<double>(value: 1),
               ),
               ListTile(
                 title: Text(context.l10n.appSettings_last6Hours),
-                leading: Radio<double>(
-                  value: 6,
-                ),
+                leading: Radio<double>(value: 6),
               ),
               ListTile(
                 title: Text(context.l10n.appSettings_last24Hours),
-                leading: Radio<double>(
-                  value: 24,
-                ),
+                leading: Radio<double>(value: 24),
               ),
               ListTile(
                 title: Text(context.l10n.appSettings_lastWeek),
-                leading: Radio<double>(
-                  value: 168,
-                ),
+                leading: Radio<double>(value: 168),
               ),
             ],
           ),
@@ -622,7 +679,10 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDebugCard(BuildContext context, AppSettingsService settingsService) {
+  Widget _buildDebugCard(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,9 +704,11 @@ class AppSettingsScreen extends StatelessWidget {
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(value
-                      ? context.l10n.appSettings_appDebugLoggingEnabled
-                      : context.l10n.appSettings_appDebugLoggingDisabled),
+                  content: Text(
+                    value
+                        ? context.l10n.appSettings_appDebugLoggingEnabled
+                        : context.l10n.appSettings_appDebugLoggingDisabled,
+                  ),
                   duration: const Duration(seconds: 2),
                 ),
               );

@@ -10,15 +10,10 @@ import '../services/path_history_service.dart';
 import 'path_selection_dialog.dart';
 
 class PathManagementDialog {
-  static Future<void> show(
-    BuildContext context, {
-    required Contact contact,
-  }) {
+  static Future<void> show(BuildContext context, {required Contact contact}) {
     return showDialog<void>(
       context: context,
-      builder: (context) => _PathManagementDialog(
-        contact: contact,
-      ),
+      builder: (context) => _PathManagementDialog(contact: contact),
     );
   }
 }
@@ -26,9 +21,7 @@ class PathManagementDialog {
 class _PathManagementDialog extends StatelessWidget {
   final Contact contact;
 
-  const _PathManagementDialog({
-    required this.contact,
-  });
+  const _PathManagementDialog({required this.contact});
 
   Contact _resolveContact(MeshCoreConnector connector) {
     return connector.contacts.firstWhere(
@@ -83,7 +76,9 @@ class _PathManagementDialog extends StatelessWidget {
     Contact currentContact,
   ) async {
     final l10n = context.l10n;
-    if (currentContact.pathLength > 0 && currentContact.path.isEmpty && connector.isConnected) {
+    if (currentContact.pathLength > 0 &&
+        currentContact.path.isEmpty &&
+        connector.isConnected) {
       connector.getContacts();
     }
 
@@ -140,13 +135,19 @@ class _PathManagementDialog extends StatelessWidget {
                 if (paths.isNotEmpty) ...[
                   Text(
                     l10n.chat_recentAckPaths,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                   if (paths.length >= 100) ...[
                     const SizedBox(height: 8),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amberAccent,
                         borderRadius: BorderRadius.circular(8),
@@ -165,7 +166,9 @@ class _PathManagementDialog extends StatelessWidget {
                         dense: true,
                         leading: CircleAvatar(
                           radius: 16,
-                          backgroundColor: path.wasFloodDiscovery ? Colors.blue : Colors.green,
+                          backgroundColor: path.wasFloodDiscovery
+                              ? Colors.blue
+                              : Colors.green,
                           child: Text(
                             '${path.hopCount}',
                             style: const TextStyle(fontSize: 12),
@@ -193,16 +196,27 @@ class _PathManagementDialog extends StatelessWidget {
                               },
                             ),
                             path.wasFloodDiscovery
-                                ? const Icon(Icons.waves, size: 16, color: Colors.grey)
-                                : const Icon(Icons.route, size: 16, color: Colors.grey),
+                                ? const Icon(
+                                    Icons.waves,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  )
+                                : const Icon(
+                                    Icons.route,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
                           ],
                         ),
-                        onLongPress: () => _showFullPathDialog(context, path.pathBytes),
+                        onLongPress: () =>
+                            _showFullPathDialog(context, path.pathBytes),
                         onTap: () async {
                           if (path.pathBytes.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(l10n.chat_pathDetailsNotAvailable),
+                                content: Text(
+                                  l10n.chat_pathDetailsNotAvailable,
+                                ),
                                 duration: const Duration(seconds: 2),
                               ),
                             );
@@ -222,7 +236,9 @@ class _PathManagementDialog extends StatelessWidget {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(l10n.path_usingHopsPath(path.hopCount)),
+                              content: Text(
+                                l10n.path_usingHopsPath(path.hopCount),
+                              ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -238,7 +254,10 @@ class _PathManagementDialog extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   l10n.chat_pathActions,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ListTile(
@@ -248,8 +267,14 @@ class _PathManagementDialog extends StatelessWidget {
                     backgroundColor: Colors.purple,
                     child: Icon(Icons.edit_road, size: 16),
                   ),
-                  title: Text(l10n.chat_setCustomPath, style: const TextStyle(fontSize: 14)),
-                  subtitle: Text(l10n.chat_setCustomPathSubtitle, style: const TextStyle(fontSize: 11)),
+                  title: Text(
+                    l10n.chat_setCustomPath,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  subtitle: Text(
+                    l10n.chat_setCustomPathSubtitle,
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   onTap: () async {
                     await _setCustomPath(context, connector, currentContact);
                   },
@@ -261,8 +286,14 @@ class _PathManagementDialog extends StatelessWidget {
                     backgroundColor: Colors.orange,
                     child: Icon(Icons.clear_all, size: 16),
                   ),
-                  title: Text(l10n.chat_clearPath, style: const TextStyle(fontSize: 14)),
-                  subtitle: Text(l10n.chat_clearPathSubtitle, style: const TextStyle(fontSize: 11)),
+                  title: Text(
+                    l10n.chat_clearPath,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  subtitle: Text(
+                    l10n.chat_clearPathSubtitle,
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   onTap: () async {
                     await connector.clearContactPath(currentContact);
                     if (!context.mounted) return;
@@ -282,10 +313,19 @@ class _PathManagementDialog extends StatelessWidget {
                     backgroundColor: Colors.blue,
                     child: Icon(Icons.waves, size: 16),
                   ),
-                  title: Text(l10n.chat_forceFloodMode, style: const TextStyle(fontSize: 14)),
-                  subtitle: Text(l10n.chat_floodModeSubtitle, style: const TextStyle(fontSize: 11)),
+                  title: Text(
+                    l10n.chat_forceFloodMode,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  subtitle: Text(
+                    l10n.chat_floodModeSubtitle,
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   onTap: () async {
-                    await connector.setPathOverride(currentContact, pathLen: -1);
+                    await connector.setPathOverride(
+                      currentContact,
+                      pathLen: -1,
+                    );
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

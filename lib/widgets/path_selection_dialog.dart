@@ -70,12 +70,15 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
   }
 
   void _updateTextFromContacts() {
-    final pathParts = _selectedContacts.map((contact) {
-      if (contact.publicKeyHex.length >= 2) {
-        return contact.publicKeyHex.substring(0, 2);
-      }
-      return '';
-    }).where((s) => s.isNotEmpty).toList();
+    final pathParts = _selectedContacts
+        .map((contact) {
+          if (contact.publicKeyHex.length >= 2) {
+            return contact.publicKeyHex.substring(0, 2);
+          }
+          return '';
+        })
+        .where((s) => s.isNotEmpty)
+        .toList();
 
     _controller.text = pathParts.join(',');
   }
@@ -107,7 +110,11 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
     }
 
     // Parse comma-separated hex prefixes
-    final pathIds = path.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+    final pathIds = path
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
     final pathBytesList = <int>[];
     final invalidPrefixes = <String>[];
 
@@ -132,7 +139,9 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
     if (invalidPrefixes.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.path_invalidHexPrefixes(invalidPrefixes.join(", "))),
+          content: Text(
+            l10n.path_invalidHexPrefixes(invalidPrefixes.join(", ")),
+          ),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
@@ -180,7 +189,10 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
                   children: [
                     Text(
                       l10n.path_currentPathLabel,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     if (widget.onRefresh != null)
@@ -225,7 +237,10 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
                 children: [
                   Text(
                     l10n.path_selectFromContacts,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const Spacer(),
                   if (_selectedContacts.isNotEmpty)
@@ -242,7 +257,11 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        const Icon(Icons.info_outline, size: 48, color: Colors.grey),
+                        const Icon(
+                          Icons.info_outline,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           l10n.path_noRepeatersFound,
@@ -252,7 +271,10 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
                         const SizedBox(height: 8),
                         Text(
                           l10n.path_customPathsRequire,
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -275,20 +297,30 @@ class _PathSelectionDialogState extends State<PathSelectionDialog> {
                           radius: 16,
                           backgroundColor: isSelected
                               ? Colors.green
-                              : (contact.type == 2 ? Colors.blue : Colors.purple),
+                              : (contact.type == 2
+                                    ? Colors.blue
+                                    : Colors.purple),
                           child: Icon(
-                            contact.type == 2 ? Icons.router : Icons.meeting_room,
+                            contact.type == 2
+                                ? Icons.router
+                                : Icons.meeting_room,
                             size: 16,
                             color: Colors.white,
                           ),
                         ),
-                        title: Text(contact.name, style: const TextStyle(fontSize: 14)),
+                        title: Text(
+                          contact.name,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                         subtitle: Text(
                           '${contact.typeLabel} • ${contact.publicKeyHex.substring(0, 2)}',
                           style: const TextStyle(fontSize: 10),
                         ),
                         trailing: isSelected
-                            ? const Icon(Icons.check_circle, color: Colors.green)
+                            ? const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              )
                             : const Icon(Icons.add_circle_outline),
                         onTap: () => _toggleContact(contact),
                       );

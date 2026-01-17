@@ -38,10 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings_title),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.settings_title), centerTitle: true),
       body: SafeArea(
         top: false,
         child: Consumer<MeshCoreConnector>(
@@ -68,7 +65,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildDeviceInfoCard(BuildContext context, MeshCoreConnector connector) {
+  Widget _buildDeviceInfoCard(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) {
     final l10n = context.l10n;
     return Card(
       child: Padding(
@@ -83,21 +83,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             _buildInfoRow(l10n.settings_infoName, connector.deviceDisplayName),
             _buildInfoRow(l10n.settings_infoId, connector.deviceIdLabel),
-            _buildInfoRow(l10n.settings_infoStatus, connector.isConnected ? l10n.common_connected : l10n.common_disconnected),
+            _buildInfoRow(
+              l10n.settings_infoStatus,
+              connector.isConnected
+                  ? l10n.common_connected
+                  : l10n.common_disconnected,
+            ),
             _buildBatteryInfoRow(context, connector),
             if (connector.selfName != null)
               _buildInfoRow(l10n.settings_nodeName, connector.selfName!),
             if (connector.selfPublicKey != null)
-              _buildInfoRow(l10n.settings_infoPublicKey, '${pubKeyToHex(connector.selfPublicKey!).substring(0, 16)}...'),
-            _buildInfoRow(l10n.settings_infoContactsCount, '${connector.contacts.length}'),
-            _buildInfoRow(l10n.settings_infoChannelCount, '${connector.channels.length}'),
+              _buildInfoRow(
+                l10n.settings_infoPublicKey,
+                '${pubKeyToHex(connector.selfPublicKey!).substring(0, 16)}...',
+              ),
+            _buildInfoRow(
+              l10n.settings_infoContactsCount,
+              '${connector.contacts.length}',
+            ),
+            _buildInfoRow(
+              l10n.settings_infoChannelCount,
+              '${connector.channels.length}',
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBatteryInfoRow(BuildContext context, MeshCoreConnector connector) {
+  Widget _buildBatteryInfoRow(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) {
     final l10n = context.l10n;
     final percent = connector.batteryPercent;
     final millivolts = connector.batteryMillivolts;
@@ -167,7 +184,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNodeSettingsCard(BuildContext context, MeshCoreConnector connector) {
+  Widget _buildNodeSettingsCard(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) {
     final l10n = context.l10n;
     return Card(
       child: Column(
@@ -298,7 +318,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BleDebugLogScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const BleDebugLogScreen(),
+                ),
               );
             },
           ),
@@ -311,7 +333,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AppDebugLogScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const AppDebugLogScreen(),
+                ),
               );
             },
           ),
@@ -334,20 +358,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           Row(
             children: [
-              if (leading != null) ...[
-                leading,
-                const SizedBox(width: 8),
-              ],
+              if (leading != null) ...[leading, const SizedBox(width: 8)],
               Text(label, style: TextStyle(color: Colors.grey[600])),
             ],
           ),
           Flexible(
             child: Text(
               value,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: valueColor,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, color: valueColor),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -426,7 +444,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 labelText: l10n.settings_latitude,
                 border: const OutlineInputBorder(),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+                signed: true,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -435,7 +456,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 labelText: l10n.settings_longitude,
                 border: const OutlineInputBorder(),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+                signed: true,
+              ),
             ),
           ],
         ),
@@ -455,8 +479,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               final currentLat = connector.selfLatitude;
               final currentLon = connector.selfLongitude;
-              final lat = latText.isNotEmpty ? double.tryParse(latText) : currentLat;
-              final lon = lonText.isNotEmpty ? double.tryParse(lonText) : currentLon;
+              final lat = latText.isNotEmpty
+                  ? double.tryParse(latText)
+                  : currentLat;
+              final lon = lonText.isNotEmpty
+                  ? double.tryParse(lonText)
+                  : currentLon;
               if (lat == null || lon == null) {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -530,17 +558,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _sendAdvert(BuildContext context, MeshCoreConnector connector) {
     final l10n = context.l10n;
     connector.sendSelfAdvert(flood: true);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.settings_advertisementSent)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.settings_advertisementSent)));
   }
 
   void _syncTime(BuildContext context, MeshCoreConnector connector) {
     final l10n = context.l10n;
     connector.syncTime();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.settings_timeSynchronized)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.settings_timeSynchronized)));
   }
 
   void _confirmReboot(BuildContext context, MeshCoreConnector connector) {
@@ -560,7 +588,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Navigator.pop(context);
               connector.rebootDevice();
             },
-            child: Text(l10n.common_reboot, style: const TextStyle(color: Colors.orange)),
+            child: Text(
+              l10n.common_reboot,
+              style: const TextStyle(color: Colors.orange),
+            ),
           ),
         ],
       ),
@@ -572,7 +603,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showAboutDialog(
       context: context,
       applicationName: l10n.appTitle,
-      applicationVersion: _appVersion.isEmpty ? l10n.common_loading : _appVersion,
+      applicationVersion: _appVersion.isEmpty
+          ? l10n.common_loading
+          : _appVersion,
       applicationLegalese: l10n.settings_aboutLegalese,
       children: [
         const SizedBox(height: 16),
@@ -604,7 +637,8 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
 
     // Populate with current settings if available
     if (widget.connector.currentFreqHz != null) {
-      _frequencyController.text = (widget.connector.currentFreqHz! / 1000.0).toStringAsFixed(3);
+      _frequencyController.text = (widget.connector.currentFreqHz! / 1000.0)
+          .toStringAsFixed(3);
     } else {
       _frequencyController.text = '915.0';
     }
@@ -670,26 +704,31 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
     final txPower = int.tryParse(_txPowerController.text);
 
     if (freqMHz == null || freqMHz < 300 || freqMHz > 2500) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settings_frequencyInvalid)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.settings_frequencyInvalid)));
       return;
     }
 
     if (txPower == null || txPower < 0 || txPower > 22) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settings_txPowerInvalid)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.settings_txPowerInvalid)));
       return;
     }
 
     final freqHz = (freqMHz * 1000).round();
     final bwHz = _bandwidth.hz;
     final sf = _spreadingFactor.value;
-    final cr = _toDeviceCodingRate(_codingRate.value, widget.connector.currentCr);
+    final cr = _toDeviceCodingRate(
+      _codingRate.value,
+      widget.connector.currentCr,
+    );
 
     try {
-      await widget.connector.sendFrame(buildSetRadioParamsFrame(freqHz, bwHz, sf, cr));
+      await widget.connector.sendFrame(
+        buildSetRadioParamsFrame(freqHz, bwHz, sf, cr),
+      );
       await widget.connector.sendFrame(buildSetRadioTxPowerFrame(txPower));
       await widget.connector.refreshDeviceInfo();
 
@@ -727,7 +766,10 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.settings_presets, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              l10n.settings_presets,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -762,7 +804,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
                 border: const OutlineInputBorder(),
                 helperText: l10n.settings_frequencyHelper,
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaBandwidth>(
@@ -772,10 +816,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
                 border: const OutlineInputBorder(),
               ),
               items: LoRaBandwidth.values
-                  .map((bw) => DropdownMenuItem(
-                        value: bw,
-                        child: Text(bw.label),
-                      ))
+                  .map(
+                    (bw) => DropdownMenuItem(value: bw, child: Text(bw.label)),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) setState(() => _bandwidth = value);
@@ -789,10 +832,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
                 border: const OutlineInputBorder(),
               ),
               items: LoRaSpreadingFactor.values
-                  .map((sf) => DropdownMenuItem(
-                        value: sf,
-                        child: Text(sf.label),
-                      ))
+                  .map(
+                    (sf) => DropdownMenuItem(value: sf, child: Text(sf.label)),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) setState(() => _spreadingFactor = value);
@@ -806,10 +848,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
                 border: const OutlineInputBorder(),
               ),
               items: LoRaCodingRate.values
-                  .map((cr) => DropdownMenuItem(
-                        value: cr,
-                        child: Text(cr.label),
-                      ))
+                  .map(
+                    (cr) => DropdownMenuItem(value: cr, child: Text(cr.label)),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) setState(() => _codingRate = value);
@@ -833,10 +874,7 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.common_cancel),
         ),
-        FilledButton(
-          onPressed: _saveSettings,
-          child: Text(l10n.common_save),
-        ),
+        FilledButton(onPressed: _saveSettings, child: Text(l10n.common_save)),
       ],
     );
   }
@@ -850,9 +888,6 @@ class _PresetChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip(
-      label: Text(label),
-      onPressed: onTap,
-    );
+    return ActionChip(label: Text(label), onPressed: onTap);
   }
 }

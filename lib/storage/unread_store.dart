@@ -92,8 +92,9 @@ class UnreadStore {
     if (_pendingChannelLastRead == null) return;
 
     final prefs = PrefsManager.instance;
-    final asString =
-        _pendingChannelLastRead!.map((key, value) => MapEntry(key.toString(), value));
+    final asString = _pendingChannelLastRead!.map(
+      (key, value) => MapEntry(key.toString(), value),
+    );
     final jsonStr = jsonEncode(asString);
     await prefs.setString(_channelLastReadKey, jsonStr);
     _pendingChannelLastRead = null;
@@ -104,9 +105,6 @@ class UnreadStore {
     _contactSaveTimer?.cancel();
     _channelSaveTimer?.cancel();
 
-    await Future.wait([
-      _flushContactLastRead(),
-      _flushChannelLastRead(),
-    ]);
+    await Future.wait([_flushContactLastRead(), _flushChannelLastRead()]);
   }
 }

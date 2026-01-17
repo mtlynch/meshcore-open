@@ -43,9 +43,9 @@ class Message {
     Uint8List? pathBytes,
     Uint8List? fourByteRoomContactKey,
     Map<String, int>? reactions,
-  })  : pathBytes = pathBytes ?? Uint8List(0),
-        fourByteRoomContactKey = fourByteRoomContactKey ?? Uint8List(0),
-        reactions = reactions ?? {};
+  }) : pathBytes = pathBytes ?? Uint8List(0),
+       fourByteRoomContactKey = fourByteRoomContactKey ?? Uint8List(0),
+       reactions = reactions ?? {};
 
   String get senderKeyHex => pubKeyToHex(senderKey);
 
@@ -80,7 +80,8 @@ class Message {
       pathLength: pathLength ?? this.pathLength,
       pathBytes: pathBytes ?? this.pathBytes,
       reactions: reactions ?? this.reactions,
-      fourByteRoomContactKey: fourByteRoomContactKey ?? this.fourByteRoomContactKey,
+      fourByteRoomContactKey:
+          fourByteRoomContactKey ?? this.fourByteRoomContactKey,
     );
   }
 

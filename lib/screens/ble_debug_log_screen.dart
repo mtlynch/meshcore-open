@@ -24,7 +24,9 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
         final entries = logService.entries.reversed.toList();
         final rawEntries = logService.rawLogRxEntries.reversed.toList();
         final showingFrames = _view == _BleLogView.frames;
-        final hasEntries = showingFrames ? entries.isNotEmpty : rawEntries.isNotEmpty;
+        final hasEntries = showingFrames
+            ? entries.isNotEmpty
+            : rawEntries.isNotEmpty;
         return Scaffold(
           appBar: AppBar(
             title: Text(context.l10n.debugLog_bleTitle),
@@ -36,15 +38,23 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
                     ? () async {
                         final text = showingFrames
                             ? entries
-                                .map((entry) => '${entry.description}\n${entry.hexPreview}\n')
-                                .join('\n')
+                                  .map(
+                                    (entry) =>
+                                        '${entry.description}\n${entry.hexPreview}\n',
+                                  )
+                                  .join('\n')
                             : rawEntries
-                                .map((entry) => 'RX RAW_LOG_RX_DATA\n${entry.hexPreview}\n')
-                                .join('\n');
+                                  .map(
+                                    (entry) =>
+                                        'RX RAW_LOG_RX_DATA\n${entry.hexPreview}\n',
+                                  )
+                                  .join('\n');
                         await Clipboard.setData(ClipboardData(text: text));
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(context.l10n.debugLog_bleCopied)),
+                          SnackBar(
+                            content: Text(context.l10n.debugLog_bleCopied),
+                          ),
                         );
                       }
                     : null,
@@ -68,8 +78,14 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                   child: SegmentedButton<_BleLogView>(
                     segments: [
-                      ButtonSegment(value: _BleLogView.frames, label: Text(context.l10n.debugLog_frames)),
-                      ButtonSegment(value: _BleLogView.rawLogRx, label: Text(context.l10n.debugLog_rawLogRx)),
+                      ButtonSegment(
+                        value: _BleLogView.frames,
+                        label: Text(context.l10n.debugLog_frames),
+                      ),
+                      ButtonSegment(
+                        value: _BleLogView.rawLogRx,
+                        label: Text(context.l10n.debugLog_rawLogRx),
+                      ),
                     ],
                     selected: {_view},
                     onSelectionChanged: (selection) {
@@ -81,7 +97,9 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
                 Expanded(
                   child: hasEntries
                       ? ListView.separated(
-                          itemCount: showingFrames ? entries.length : rawEntries.length,
+                          itemCount: showingFrames
+                              ? entries.length
+                              : rawEntries.length,
                           separatorBuilder: (_, __) => const Divider(height: 1),
                           itemBuilder: (context, index) {
                             if (showingFrames) {
@@ -94,7 +112,9 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
                                 subtitle: Text('${entry.hexPreview}\n$time'),
                                 isThreeLine: true,
                                 leading: Icon(
-                                  entry.outgoing ? Icons.upload : Icons.download,
+                                  entry.outgoing
+                                      ? Icons.upload
+                                      : Icons.download,
                                   size: 18,
                                 ),
                               );
@@ -131,9 +151,7 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(info.title),
-        content: SingleChildScrollView(
-          child: SelectableText(info.rawHex),
-        ),
+        content: SingleChildScrollView(child: SelectableText(info.rawHex)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -195,11 +213,18 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
     }
     final payload = raw.sublist(index);
 
-    final title = 'RX ${_payloadTypeLabel(payloadType)} • ${_routeLabel(routeType)} • v$payloadVer';
+    final title =
+        'RX ${_payloadTypeLabel(payloadType)} • ${_routeLabel(routeType)} • v$payloadVer';
     final summary = _decodePayloadSummary(payloadType, payload);
-    final pathSummary = pathLen > 0 ? 'Path=${_bytesToHex(pathBytes)}' : 'Path=none';
+    final pathSummary = pathLen > 0
+        ? 'Path=${_bytesToHex(pathBytes)}'
+        : 'Path=none';
     final detail = '$summary • $pathSummary • len=${raw.length}';
-    return _RawPacketInfo(title: title, summary: detail, rawHex: _bytesToHex(raw));
+    return _RawPacketInfo(
+      title: title,
+      summary: detail,
+      rawHex: _bytesToHex(raw),
+    );
   }
 
   String _decodePayloadSummary(int payloadType, Uint8List payload) {
@@ -245,7 +270,10 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
       return 'ADVERT (short)';
     }
     var offset = 0;
-    final pubKey = _bytesToHex(payload.sublist(offset, offset + 32), spaced: false);
+    final pubKey = _bytesToHex(
+      payload.sublist(offset, offset + 32),
+      spaced: false,
+    );
     offset += 32;
     final timestamp = readUint32LE(payload, offset);
     offset += 4;

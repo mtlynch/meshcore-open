@@ -26,8 +26,10 @@ class AppDebugLogScreen extends StatelessWidget {
                 onPressed: hasEntries
                     ? () async {
                         final text = entries
-                            .map((entry) =>
-                                '[${entry.formattedTime}] [${entry.levelLabel}] [${entry.tag}] ${entry.message}')
+                            .map(
+                              (entry) =>
+                                  '[${entry.formattedTime}] [${entry.levelLabel}] [${entry.tag}] ${entry.message}',
+                            )
                             .join('\n');
                         await Clipboard.setData(ClipboardData(text: text));
                         if (!context.mounted) return;
@@ -61,11 +63,17 @@ class AppDebugLogScreen extends StatelessWidget {
                         leading: _buildLevelIcon(entry.level),
                         title: Text(
                           '[${entry.tag}] ${entry.message}',
-                          style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'monospace',
+                          ),
                         ),
                         subtitle: Text(
                           entry.formattedTime,
-                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       );
                     },
@@ -74,16 +82,26 @@ class AppDebugLogScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.bug_report_outlined, size: 64, color: Colors.grey[400]),
+                        Icon(
+                          Icons.bug_report_outlined,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.debugLog_noEntries,
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           context.l10n.debugLog_enableInSettings,
-                          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                          ),
                         ),
                       ],
                     ),
@@ -99,7 +117,11 @@ class AppDebugLogScreen extends StatelessWidget {
       case AppDebugLogLevel.info:
         return const Icon(Icons.info_outline, size: 18, color: Colors.blue);
       case AppDebugLogLevel.warning:
-        return const Icon(Icons.warning_amber_outlined, size: 18, color: Colors.orange);
+        return const Icon(
+          Icons.warning_amber_outlined,
+          size: 18,
+          color: Colors.orange,
+        );
       case AppDebugLogLevel.error:
         return const Icon(Icons.error_outline, size: 18, color: Colors.red);
     }

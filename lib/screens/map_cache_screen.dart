@@ -56,10 +56,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
     _updateEstimate();
     if (bounds != null) {
       _mapController.fitCamera(
-        CameraFit.bounds(
-          bounds: bounds,
-          padding: const EdgeInsets.all(48),
-        ),
+        CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
       );
     }
   }
@@ -72,8 +69,11 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
       return;
     }
     final cacheService = context.read<MapTileCacheService>();
-    final count =
-        cacheService.estimateTileCount(_selectedBounds!, _minZoom, _maxZoom);
+    final count = cacheService.estimateTileCount(
+      _selectedBounds!,
+      _minZoom,
+      _maxZoom,
+    );
     setState(() {
       _estimatedTiles = count;
     });
@@ -181,9 +181,9 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
             result.failed,
           )
         : context.l10n.mapCache_cachedTiles(result.downloaded);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _clearCache() async {
@@ -224,10 +224,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
         : (_completedTiles / _estimatedTiles).clamp(0.0, 1.0).toDouble();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.mapCache_title),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.mapCache_title), centerTitle: true),
       body: Column(
         children: [
           Expanded(
@@ -290,7 +287,10 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                 children: [
                   Text(
                     l10n.mapCache_cacheArea,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -304,8 +304,9 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                       ),
                       const SizedBox(width: 12),
                       TextButton(
-                        onPressed:
-                            _isDownloading || selectedBounds == null ? null : _clearBounds,
+                        onPressed: _isDownloading || selectedBounds == null
+                            ? null
+                            : _clearBounds,
                         child: Text(l10n.common_clear),
                       ),
                     ],
@@ -313,11 +314,16 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                   const SizedBox(height: 12),
                   Text(
                     l10n.mapCache_zoomRange,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   RangeSlider(
-                    values:
-                        RangeValues(_minZoom.toDouble(), _maxZoom.toDouble()),
+                    values: RangeValues(
+                      _minZoom.toDouble(),
+                      _maxZoom.toDouble(),
+                    ),
                     min: 3,
                     max: 18,
                     divisions: 15,
@@ -341,10 +347,12 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: progressValue),
                     const SizedBox(height: 4),
-                    Text(l10n.mapCache_downloadedTiles(
-                      _completedTiles,
-                      _estimatedTiles,
-                    )),
+                    Text(
+                      l10n.mapCache_downloadedTiles(
+                        _completedTiles,
+                        _estimatedTiles,
+                      ),
+                    ),
                   ],
                   const SizedBox(height: 12),
                   Row(

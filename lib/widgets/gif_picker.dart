@@ -7,10 +7,7 @@ import '../l10n/l10n.dart';
 class GifPicker extends StatefulWidget {
   final Function(String gifId) onGifSelected;
 
-  const GifPicker({
-    super.key,
-    required this.onGifSelected,
-  });
+  const GifPicker({super.key, required this.onGifSelected});
 
   @override
   State<GifPicker> createState() => _GifPickerState();
@@ -45,11 +42,13 @@ class _GifPickerState extends State<GifPicker> {
     });
 
     try {
-      final response = await http.get(
-        Uri.parse(
-          'https://api.giphy.com/v1/gifs/trending?api_key=$_giphyApiKey&limit=25&rating=g',
-        ),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://api.giphy.com/v1/gifs/trending?api_key=$_giphyApiKey&limit=25&rating=g',
+            ),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -85,11 +84,13 @@ class _GifPickerState extends State<GifPicker> {
     });
 
     try {
-      final response = await http.get(
-        Uri.parse(
-          'https://api.giphy.com/v1/gifs/search?api_key=$_giphyApiKey&q=${Uri.encodeComponent(query)}&limit=25&rating=g',
-        ),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://api.giphy.com/v1/gifs/search?api_key=$_giphyApiKey&q=${Uri.encodeComponent(query)}&limit=25&rating=g',
+            ),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -127,7 +128,10 @@ class _GifPickerState extends State<GifPicker> {
               const SizedBox(width: 8),
               Text(
                 context.l10n.gifPicker_title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Spacer(),
               IconButton(
@@ -170,18 +174,13 @@ class _GifPickerState extends State<GifPicker> {
           const SizedBox(height: 16),
 
           // GIF grid
-          Expanded(
-            child: _buildContent(),
-          ),
+          Expanded(child: _buildContent()),
 
           // Powered by Giphy attribution
           const SizedBox(height: 8),
           Text(
             context.l10n.gifPicker_poweredBy,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -190,9 +189,7 @@ class _GifPickerState extends State<GifPicker> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
@@ -244,7 +241,8 @@ class _GifPickerState extends State<GifPicker> {
       itemBuilder: (context, index) {
         final gif = _gifs[index];
         final gifId = gif['id'] as String;
-        final previewUrl = gif['images']?['fixed_height_small']?['url'] as String?;
+        final previewUrl =
+            gif['images']?['fixed_height_small']?['url'] as String?;
 
         return GestureDetector(
           onTap: () {
@@ -265,20 +263,16 @@ class _GifPickerState extends State<GifPicker> {
                           child: CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
+                                      loadingProgress.expectedTotalBytes!
                                 : null,
                           ),
                         );
                       },
                       errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Icon(Icons.error_outline),
-                        );
+                        return const Center(child: Icon(Icons.error_outline));
                       },
                     )
-                  : const Center(
-                      child: Icon(Icons.gif_box),
-                    ),
+                  : const Center(child: Icon(Icons.gif_box)),
             ),
           ),
         );

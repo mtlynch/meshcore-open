@@ -65,16 +65,18 @@ void main() async {
   await connector.loadAllChannelMessages();
   await connector.loadUnreadState();
 
-  runApp(MeshCoreApp(
-    connector: connector,
-    retryService: retryService,
-    pathHistoryService: pathHistoryService,
-    storage: storage,
-    appSettingsService: appSettingsService,
-    bleDebugLogService: bleDebugLogService,
-    appDebugLogService: appDebugLogService,
-    mapTileCacheService: mapTileCacheService,
-  ));
+  runApp(
+    MeshCoreApp(
+      connector: connector,
+      retryService: retryService,
+      pathHistoryService: pathHistoryService,
+      storage: storage,
+      appSettingsService: appSettingsService,
+      bleDebugLogService: bleDebugLogService,
+      appDebugLogService: appDebugLogService,
+      mapTileCacheService: mapTileCacheService,
+    ),
+  );
 }
 
 class MeshCoreApp extends StatelessWidget {
@@ -124,7 +126,9 @@ class MeshCoreApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
-            locale: _localeFromSetting(settingsService.settings.languageOverride),
+            locale: _localeFromSetting(
+              settingsService.settings.languageOverride,
+            ),
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               useMaterial3: true,
@@ -136,7 +140,9 @@ class MeshCoreApp extends StatelessWidget {
               ),
               useMaterial3: true,
             ),
-            themeMode: _themeModeFromSetting(settingsService.settings.themeMode),
+            themeMode: _themeModeFromSetting(
+              settingsService.settings.themeMode,
+            ),
             home: const ScannerScreen(),
           );
         },

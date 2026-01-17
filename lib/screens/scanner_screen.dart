@@ -29,9 +29,7 @@ class ScannerScreen extends StatelessWidget {
                 _buildStatusBar(context, connector),
 
                 // Device list
-                Expanded(
-                  child: _buildDeviceList(context, connector),
-                ),
+                Expanded(child: _buildDeviceList(context, connector)),
               ],
             );
           },
@@ -39,8 +37,9 @@ class ScannerScreen extends StatelessWidget {
       ),
       floatingActionButton: Consumer<MeshCoreConnector>(
         builder: (context, connector, child) {
-          final isScanning = connector.state == MeshCoreConnectionState.scanning;
-          
+          final isScanning =
+              connector.state == MeshCoreConnectionState.scanning;
+
           return FloatingActionButton.extended(
             onPressed: () {
               if (isScanning) {
@@ -49,7 +48,7 @@ class ScannerScreen extends StatelessWidget {
                 connector.startScan();
               }
             },
-            icon: isScanning 
+            icon: isScanning
                 ? const SizedBox(
                     width: 20,
                     height: 20,
@@ -59,7 +58,11 @@ class ScannerScreen extends StatelessWidget {
                     ),
                   )
                 : const Icon(Icons.bluetooth_searching),
-            label: Text(isScanning ? context.l10n.scanner_stop : context.l10n.scanner_scan),
+            label: Text(
+              isScanning
+                  ? context.l10n.scanner_stop
+                  : context.l10n.scanner_scan,
+            ),
           );
         },
       ),
@@ -70,7 +73,7 @@ class ScannerScreen extends StatelessWidget {
     String statusText;
     Color statusColor;
 
-final l10n = context.l10n;
+    final l10n = context.l10n;
     switch (connector.state) {
       case MeshCoreConnectionState.scanning:
         statusText = l10n.scanner_scanning;
@@ -117,20 +120,13 @@ final l10n = context.l10n;
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.bluetooth,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.bluetooth, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               connector.state == MeshCoreConnectionState.scanning
                   ? context.l10n.scanner_searchingDevices
                   : context.l10n.scanner_tapToScan,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -161,13 +157,11 @@ final l10n = context.l10n;
           ? result.device.platformName
           : result.advertisementData.advName;
       await connector.connect(result.device, displayName: name);
-      
+
       if (context.mounted && connector.isConnected) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const ContactsScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const ContactsScreen()),
         );
       }
     } catch (e) {

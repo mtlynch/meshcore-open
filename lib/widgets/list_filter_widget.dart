@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
 
-enum ContactSortOption {
-  lastSeen,
-  recentMessages,
-  name,
-}
+enum ContactSortOption { lastSeen, recentMessages, name }
 
-enum ContactTypeFilter {
-  all,
-  users,
-  repeaters,
-  rooms,
-}
+enum ContactTypeFilter { all, users, repeaters, rooms }
 
 class SortFilterMenuOption {
   final int value;
@@ -30,10 +21,7 @@ class SortFilterMenuSection {
   final String title;
   final List<SortFilterMenuOption> options;
 
-  const SortFilterMenuSection({
-    required this.title,
-    required this.options,
-  });
+  const SortFilterMenuSection({required this.title, required this.options});
 }
 
 class SortFilterMenu extends StatelessWidget {
@@ -62,7 +50,9 @@ class SortFilterMenu extends StatelessWidget {
           color: theme.colorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w600,
         );
-        final visibleSections = sections.where((section) => section.options.isNotEmpty).toList();
+        final visibleSections = sections
+            .where((section) => section.options.isNotEmpty)
+            .toList();
         final entries = <PopupMenuEntry<int>>[];
         for (int i = 0; i < visibleSections.length; i++) {
           final section = visibleSections[i];

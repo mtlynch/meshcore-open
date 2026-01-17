@@ -26,9 +26,11 @@ class CayenneLpp {
   static const int lppUnixTime = 133; // 4 bytes, unsigned
   static const int lppGyrometer = 134; // 2 bytes per axis, 0.01 °/s
   static const int lppColour = 135; // 1 byte per RGB Color
-  static const int lppGps = 136; // 3 byte lon/lat 0.0001 °, 3 bytes alt 0.01 meter
+  static const int lppGps =
+      136; // 3 byte lon/lat 0.0001 °, 3 bytes alt 0.01 meter
   static const int lppSwitch = 142; // 1 byte, 0/1
-  static const int lppPolyline = 240; // 1 byte size, 1 byte delta factor, 3 byte lon/lat 0.0001° * factor, n (size-8) bytes deltas
+  static const int lppPolyline =
+      240; // 1 byte size, 1 byte delta factor, 3 byte lon/lat 0.0001° * factor, n (size-8) bytes deltas
 
   final BufferWriter _writer = BufferWriter();
 
@@ -201,10 +203,10 @@ class CayenneLpp {
         break;
       }
 
-      final channelData = channels.putIfAbsent(channel, () => {
-        'channel': channel,
-        'values': <String, dynamic>{},
-      });
+      final channelData = channels.putIfAbsent(
+        channel,
+        () => {'channel': channel, 'values': <String, dynamic>{}},
+      );
 
       switch (type) {
         case lppGenericSensor:
@@ -254,8 +256,8 @@ class CayenneLpp {
       }
     }
 
-  final List<Map<String, dynamic>> channelsOut = channels.values.toList();
-  channelsOut.sort((a, b) => a['channel'].compareTo(b['channel']));
-  return channelsOut;
+    final List<Map<String, dynamic>> channelsOut = channels.values.toList();
+    channelsOut.sort((a, b) => a['channel'].compareTo(b['channel']));
+    return channelsOut;
   }
 }

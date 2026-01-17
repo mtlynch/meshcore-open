@@ -10,11 +10,7 @@ class Channel {
   final String name;
   final Uint8List psk; // 16 bytes
 
-  Channel({
-    required this.index,
-    required this.name,
-    required this.psk,
-  });
+  Channel({required this.index, required this.name, required this.psk});
 
   String get pskHex => _bytesToHex(psk);
 
@@ -39,11 +35,7 @@ class Channel {
   }
 
   static Channel empty(int index) {
-    return Channel(
-      index: index,
-      name: '',
-      psk: Uint8List(16),
-    );
+    return Channel(index: index, name: '', psk: Uint8List(16));
   }
 
   static Channel fromHex(int index, String name, String pskHex) {

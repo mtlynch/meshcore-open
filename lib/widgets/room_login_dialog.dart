@@ -15,11 +15,7 @@ class RoomLoginDialog extends StatefulWidget {
   final Contact room;
   final Function(String password) onLogin;
 
-  const RoomLoginDialog({
-    super.key,
-    required this.room,
-    required this.onLogin,
-  });
+  const RoomLoginDialog({super.key, required this.room, required this.onLogin});
 
   @override
   State<RoomLoginDialog> createState() => _RoomLoginDialogState();
@@ -43,8 +39,9 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
   }
 
   Future<void> _loadSavedPassword() async {
-    final savedPassword =
-        await _storage.getRepeaterPassword(widget.room.publicKeyHex);
+    final savedPassword = await _storage.getRepeaterPassword(
+      widget.room.publicKeyHex,
+    );
     if (savedPassword != null) {
       setState(() {
         _passwordController.text = savedPassword;
@@ -100,12 +97,10 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
       );
       final timeoutSeconds = (timeoutMs / 1000).ceil();
       final timeout = Duration(milliseconds: timeoutMs);
-      final selectionLabel =
-          selection.useFlood ? 'flood' : '${selection.hopCount} hops';
-      appLogger.info(
-        'Login routing: $selectionLabel',
-        tag: 'RoomLogin',
-      );
+      final selectionLabel = selection.useFlood
+          ? 'flood'
+          : '${selection.hopCount} hops';
+      appLogger.info('Login routing: $selectionLabel', tag: 'RoomLogin');
       bool? loginResult;
       for (int attempt = 0; attempt < _maxAttempts; attempt++) {
         if (!mounted) return;
@@ -117,23 +112,15 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
           'Sending login attempt ${attempt + 1}/$_maxAttempts',
           tag: 'RoomLogin',
         );
-        await _connector.sendFrame(
-          loginFrame,
-        );
+        await _connector.sendFrame(loginFrame);
 
         loginResult = await _awaitLoginResponse(timeout);
         if (loginResult == true) {
-          appLogger.info(
-            'Login succeeded for ${room.name}',
-            tag: 'RoomLogin',
-          );
+          appLogger.info('Login succeeded for ${room.name}', tag: 'RoomLogin');
           break;
         }
         if (loginResult == false) {
-          appLogger.warn(
-            'Login failed for ${room.name}',
-            tag: 'RoomLogin',
-          );
+          appLogger.warn('Login failed for ${room.name}', tag: 'RoomLogin');
           throw Exception('Wrong password or node is unreachable');
         }
         appLogger.warn(
@@ -143,10 +130,7 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
       }
 
       if (loginResult == null) {
-        appLogger.warn(
-          'Login timed out for ${room.name}',
-          tag: 'RoomLogin',
-        );
+        appLogger.warn('Login timed out for ${room.name}', tag: 'RoomLogin');
       }
 
       if (loginResult == true) {
@@ -162,8 +146,7 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
       // If we got a response, login succeeded
       // Save password if requested
       if (_savePassword) {
-        await _storage.saveRepeaterPassword(
-            widget.room.publicKeyHex, password);
+        await _storage.saveRepeaterPassword(widget.room.publicKeyHex, password);
       } else {
         // Remove saved password if user unchecked the box
         await _storage.removeRepeaterPassword(widget.room.publicKeyHex);
@@ -175,10 +158,7 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
       }
     } catch (e) {
       final room = _resolveRepeater(_connector);
-      appLogger.warn(
-        'Login error for ${room.name}: $e',
-        tag: 'RoomLogin',
-      );
+      appLogger.warn('Login error for ${room.name}: $e', tag: 'RoomLogin');
       if (mounted) {
         setState(() {
           _isLoggingIn = false;
@@ -318,7 +298,10 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
                   children: [
                     Text(
                       l10n.login_routing,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     PopupMenuButton<String>(
@@ -326,9 +309,15 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
                       tooltip: l10n.login_routingMode,
                       onSelected: (mode) async {
                         if (mode == 'flood') {
-                          await connector.setPathOverride(repeater, pathLen: -1);
+                          await connector.setPathOverride(
+                            repeater,
+                            pathLen: -1,
+                          );
                         } else {
-                          await connector.setPathOverride(repeater, pathLen: null);
+                          await connector.setPathOverride(
+                            repeater,
+                            pathLen: null,
+                          );
                         }
                       },
                       itemBuilder: (context) => [
@@ -336,12 +325,20 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
                           value: 'auto',
                           child: Row(
                             children: [
-                              Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                              Icon(
+                                Icons.auto_mode,
+                                size: 20,
+                                color: !isFloodMode
+                                    ? Theme.of(context).primaryColor
+                                    : null,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.login_autoUseSavedPath,
                                 style: TextStyle(
-                                  fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                                  fontWeight: !isFloodMode
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                               ),
                             ],
@@ -351,12 +348,20 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
                           value: 'flood',
                           child: Row(
                             children: [
-                              Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                              Icon(
+                                Icons.waves,
+                                size: 20,
+                                color: isFloodMode
+                                    ? Theme.of(context).primaryColor
+                                    : null,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.login_forceFloodMode,
                                 style: TextStyle(
-                                  fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                                  fontWeight: isFloodMode
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                               ),
                             ],
@@ -375,7 +380,8 @@ class _RoomLoginDialogState extends State<RoomLoginDialog> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
-                    onPressed: () => PathManagementDialog.show(context, contact: repeater),
+                    onPressed: () =>
+                        PathManagementDialog.show(context, contact: repeater),
                     icon: const Icon(Icons.timeline, size: 18),
                     label: Text(l10n.login_managePaths),
                   ),

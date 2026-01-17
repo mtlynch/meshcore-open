@@ -5,7 +5,11 @@ import '../connector/meshcore_protocol.dart';
 
 /// Debug widget to show the hex dump of a frame
 class DebugFrameViewer {
-  static void showFrameDebug(BuildContext context, Uint8List frame, String title) {
+  static void showFrameDebug(
+    BuildContext context,
+    Uint8List frame,
+    String title,
+  ) {
     final hexString = frame
         .map((b) => b.toRadixString(16).padLeft(2, '0'))
         .join(' ');
@@ -14,16 +18,26 @@ class DebugFrameViewer {
     details.writeln(context.l10n.debugFrame_length(frame.length));
     details.writeln('');
     details.writeln(
-      context.l10n.debugFrame_command(frame[0].toRadixString(16).padLeft(2, '0')),
+      context.l10n.debugFrame_command(
+        frame[0].toRadixString(16).padLeft(2, '0'),
+      ),
     );
 
     if (frame[0] == cmdSendTxtMsg && frame.length > 37) {
       details.writeln('');
       details.writeln(context.l10n.debugFrame_textMessageHeader);
-      details.writeln(context.l10n.debugFrame_destinationPubKey(pubKeyToHex(frame.sublist(1, 33))));
-      details.writeln(context.l10n.debugFrame_timestamp(readUint32LE(frame, 33)));
       details.writeln(
-        context.l10n.debugFrame_flags(frame[37].toRadixString(16).padLeft(2, '0')),
+        context.l10n.debugFrame_destinationPubKey(
+          pubKeyToHex(frame.sublist(1, 33)),
+        ),
+      );
+      details.writeln(
+        context.l10n.debugFrame_timestamp(readUint32LE(frame, 33)),
+      );
+      details.writeln(
+        context.l10n.debugFrame_flags(
+          frame[37].toRadixString(16).padLeft(2, '0'),
+        ),
       );
       final txtType = (frame[37] >> 2) & 0x03;
       final typeLabel = txtType == txtTypeCliData
@@ -34,7 +48,7 @@ class DebugFrameViewer {
         final textBytes = frame.sublist(38);
         final nullIdx = textBytes.indexOf(0);
         final text = String.fromCharCodes(
-          nullIdx >= 0 ? textBytes.sublist(0, nullIdx) : textBytes
+          nullIdx >= 0 ? textBytes.sublist(0, nullIdx) : textBytes,
         );
         details.writeln(context.l10n.debugFrame_text(text));
       }

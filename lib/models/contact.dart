@@ -7,7 +7,8 @@ class Contact {
   final int type;
   final int pathLength; // -1 = flood, 0+ = direct hops (from device)
   final Uint8List path; // Path bytes from device
-  final int? pathOverride; // User's path override: -1 = force flood, null = auto
+  final int?
+  pathOverride; // User's path override: -1 = force flood, null = auto
   final Uint8List? pathOverrideBytes; // User's path override bytes
   final double? latitude;
   final double? longitude;
@@ -78,8 +79,12 @@ class Contact {
       type: type ?? this.type,
       pathLength: pathLength ?? this.pathLength,
       path: path ?? this.path,
-      pathOverride: clearPathOverride ? null : (pathOverride ?? this.pathOverride),
-      pathOverrideBytes: clearPathOverride ? null : (pathOverrideBytes ?? this.pathOverrideBytes),
+      pathOverride: clearPathOverride
+          ? null
+          : (pathOverride ?? this.pathOverride),
+      pathOverrideBytes: clearPathOverride
+          ? null
+          : (pathOverrideBytes ?? this.pathOverrideBytes),
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       lastSeen: lastSeen ?? this.lastSeen,
@@ -93,10 +98,14 @@ class Contact {
     final parts = <String>[];
     final groupSize = pathHashSize;
     for (int i = 0; i < pathBytes.length; i += groupSize) {
-      final end = (i + groupSize) <= pathBytes.length ? (i + groupSize) : pathBytes.length;
+      final end = (i + groupSize) <= pathBytes.length
+          ? (i + groupSize)
+          : pathBytes.length;
       final chunk = pathBytes.sublist(i, end);
       parts.add(
-        chunk.map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase()).join(),
+        chunk
+            .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+            .join(),
       );
     }
     return parts.join(',');

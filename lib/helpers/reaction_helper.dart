@@ -1,7 +1,8 @@
 class ReactionInfo {
   final String targetMessageId;
   final String emoji;
-  final String? reactionKey; // Lightweight key for deduplication: timestamp_senderPrefix
+  final String?
+  reactionKey; // Lightweight key for deduplication: timestamp_senderPrefix
 
   ReactionInfo({
     required this.targetMessageId,
@@ -42,7 +43,11 @@ class ReactionHelper {
 
   /// Generate a lightweight reaction key for a message
   /// Format: r:[timestamp]_[senderPrefix]:[emoji]
-  static String buildReactionText(String timestamp, String senderPrefix, String emoji) {
+  static String buildReactionText(
+    String timestamp,
+    String senderPrefix,
+    String emoji,
+  ) {
     return 'r:${timestamp}_$senderPrefix:$emoji';
   }
 

@@ -127,9 +127,7 @@ class _DeviceScreenState extends State<DeviceScreen>
     return Card(
       elevation: 0,
       color: colorScheme.surfaceContainerHighest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -207,7 +205,6 @@ class _DeviceScreenState extends State<DeviceScreen>
     );
   }
 
-
   Widget _buildBatteryIndicator(
     MeshCoreConnector connector,
     BuildContext context,
@@ -224,11 +221,7 @@ class _DeviceScreenState extends State<DeviceScreen>
     final icon = _batteryIcon(percent);
 
     return ActionChip(
-      avatar: Icon(
-        icon,
-        size: 16,
-        color: colorScheme.onSecondaryContainer,
-      ),
+      avatar: Icon(icon, size: 16, color: colorScheme.onSecondaryContainer),
       label: Text(displayLabel),
       labelStyle: theme.textTheme.labelMedium?.copyWith(
         color: colorScheme.onSecondaryContainer,
@@ -260,25 +253,19 @@ class _DeviceScreenState extends State<DeviceScreen>
       case 0:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const ContactsScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const ContactsScreen(hideBackButton: true)),
         );
         break;
       case 1:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const ChannelsScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const ChannelsScreen(hideBackButton: true)),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const MapScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const MapScreen(hideBackButton: true)),
         );
         break;
     }

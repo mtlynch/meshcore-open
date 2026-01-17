@@ -7,18 +7,14 @@ class DeviceTile extends StatelessWidget {
   final ScanResult scanResult;
   final VoidCallback onTap;
 
-  const DeviceTile({
-    super.key,
-    required this.scanResult,
-    required this.onTap,
-  });
+  const DeviceTile({super.key, required this.scanResult, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final device = scanResult.device;
     final rssi = scanResult.rssi;
-    final name = device.platformName.isNotEmpty 
-        ? device.platformName 
+    final name = device.platformName.isNotEmpty
+        ? device.platformName
         : scanResult.advertisementData.advName;
 
     return ListTile(
@@ -58,12 +54,8 @@ class DeviceTile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(icon, color: color),
-        Text(
-          '$rssi dBm',
-          style: TextStyle(fontSize: 10, color: color),
-        ),
+        Text('$rssi dBm', style: TextStyle(fontSize: 10, color: color)),
       ],
     );
   }
 }
-
